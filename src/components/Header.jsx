@@ -1,40 +1,34 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Flex, Text, Button } from "@chakra-ui/react";
 
-function Header({ role }) {
+const about_us = () => {
+  alert("jaldi aane wala hai ")
+}
+
+const contact_us = () => {
+  alert("wait karo ek do din")
+}
+
+function Header() {
   return (
-    <Flex bg="green.400" p={4} gap={4}>
-      
-      {/* ADMIN */}
-      {role === "admin" && (
-        <>
-          <Button as={Link} to="/admin">Dashboard</Button>
-          <Button>Request Resolver</Button>
-          <Button>User Management</Button>
-          <Button>Helpdesk</Button>
-        </>
-      )}
+    <Flex
+      bg="green.400"
+      color="white"
+      p={4}
+      justify="space-between"
+      align="center"
+    >
+      {/* Left Side */}
+      <Text fontSize="xl" fontWeight="bold">
+        EcoTrack ♻️
+      </Text>
 
-      {/* USER */}
-      {role === "user" && (
-        <>
-          <Button as={Link} to="/user">Dashboard</Button>
-          <Button>Locate Kachra</Button>
-          <Button>Past Records</Button>
-          <Button>Helpdesk</Button>
-        </>
-      )}
-
-      {/* STAFF */}
-      {role === "staff" && (
-        <>
-          <Button as={Link} to="/staff">Dashboard</Button>
-          <Button>Assigned Kachra</Button>
-          <Button>Past Records</Button>
-          <Button>Helpdesk</Button>
-        </>
-      )}
-      
+      {/* Right Side */}
+      <Flex gap={4}>
+        <Button variant="ghost" color="white" onClick={about_us}>About</Button>
+        <Button variant="ghost" color="white" onClick={contact_us}>Contact</Button>
+        <Button colorScheme="blackAlpha">Login</Button>
+        <Button colorScheme="teal">Register</Button>
+      </Flex>
     </Flex>
   );
 }

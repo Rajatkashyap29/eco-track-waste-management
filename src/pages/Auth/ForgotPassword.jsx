@@ -6,10 +6,10 @@ import {
   VStack,
   useToast,
   IconButton,
+  Progress,
 } from "@chakra-ui/react";
 
 import { CloseIcon } from "@chakra-ui/icons";
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -29,7 +29,6 @@ function ForgotPassword() {
 
   const [newPassword, setNewPassword] = useState("");
 
-  // 👉 Dummy stored data (later backend se aayega)
   const dummyUser = {
     email: "user@gmail.com",
     answer1: "dog",
@@ -37,18 +36,15 @@ function ForgotPassword() {
     answer3: "delhi",
   };
 
-  // STEP 1 → Email check
   const handleEmailCheck = () => {
     if (email !== dummyUser.email) {
       toast({ title: "Email not found", status: "error" });
       return;
     }
-
     toast({ title: "Email verified", status: "success" });
     setStep(2);
   };
 
-  // STEP 2 → Answer check
   const handleAnswerCheck = () => {
     if (
       answers.answer1 !== dummyUser.answer1 ||
@@ -59,11 +55,10 @@ function ForgotPassword() {
       return;
     }
 
-    toast({ title: "Answers verified", status: "success" });
+    toast({ title: "Verified", status: "success" });
     setStep(3);
   };
 
-  // STEP 3 → Reset password
   const handleResetPassword = () => {
     if (!newPassword) {
       toast({ title: "Enter new password", status: "error" });
@@ -71,103 +66,126 @@ function ForgotPassword() {
     }
 
     toast({ title: "Password reset successful", status: "success" });
-
     navigate("/login");
   };
 
   return (
-    <Box
-      bg="white"
-      p={8}
-      borderRadius="xl"
-      boxShadow="lg"
-      width="100%"
-      position="relative"
-    >
-      {/* ❌ CLOSE */}
-      <IconButton
-        icon={<CloseIcon />}
-        size="sm"
-        position="absolute"
-        top="10px"
-        right="10px"
-        onClick={() => navigate("/")}
-      />
+ 
+  <Box
+    minH="80vh"
+    w="100%"
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    bg="gray.100"
+    px={4}
+    overflowX="hidden"
+  >
+      <Box
+        bg="white"
+        p={8}
+        borderRadius="xl"
+        boxShadow="lg"
+        width="100%"
+        maxW="450px"
+        position="relative"
+      >
 
-      <VStack spacing={5}>
+        {/* ❌ CLOSE */}
+        <IconButton
+          icon={<CloseIcon />}
+          size="sm"
+          variant="ghost"
+          color="gray.600"
+          position="absolute"
+          top="10px"
+          right="10px"
+          _hover={{ bg: "gray.100" }}
+          onClick={() => navigate("/")}
+        />
 
-        <Text fontSize="2xl" fontWeight="bold">
-          Forgot Password
-        </Text>
+        {/* HEADER */}
+        <VStack spacing={1} mb={4}>
+          <Text fontSize="2xl" fontWeight="bold">
+            Forgot Password
+          </Text>
+          <Text fontSize="sm" color="gray.500">
+            Recover your account in 3 simple steps
+          </Text>
+        </VStack>
 
-        {/* STEP 1 */}
-        {step === 1 && (
-          <>
-            <Input
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+        {/* STEP PROGRESS */}
+        <Progress value={(step / 3) * 100} size="sm" mb={5} colorScheme="green" />
 
-            <Button colorScheme="green" width="100%" onClick={handleEmailCheck}>
-              Next
-            </Button>
-          </>
-        )}
+        <VStack spacing={4}>
 
-        {/* STEP 2 */}
-        {step === 2 && (
-          <>
-            <Text>Answer your security questions</Text>
+          {/* STEP 1 */}
+          {step === 1 && (
+            <>
+              <Input
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-            <Input
-              placeholder="Pet Name"
-              onChange={(e) =>
-                setAnswers({ ...answers, answer1: e.target.value })
-              }
-            />
+              <Button colorScheme="green" width="100%" onClick={handleEmailCheck}>
+                Next
+              </Button>
+            </>
+          )}
 
-            <Input
-              placeholder="Favorite Teacher"
-              onChange={(e) =>
-                setAnswers({ ...answers, answer2: e.target.value })
-              }
-            />
+          {/* STEP 2 */}
+          {step === 2 && (
+            <>
+              <Text fontSize="sm" color="gray.600">
+                Answer security questions
+              </Text>
 
-            <Input
-              placeholder="Birth City"
-              onChange={(e) =>
-                setAnswers({ ...answers, answer3: e.target.value })
-              }
-            />
+              <Input
+                placeholder="Pet Name"
+                onChange={(e) =>
+                  setAnswers({ ...answers, answer1: e.target.value })
+                }
+              />
 
-            <Button colorScheme="green" width="100%" onClick={handleAnswerCheck}>
-              Verify
-            </Button>
-          </>
-        )}
+              <Input
+                placeholder="Favorite Teacher"
+                onChange={(e) =>
+                  setAnswers({ ...answers, answer2: e.target.value })
+                }
+              />
 
-        {/* STEP 3 */}
-        {step === 3 && (
-          <>
-            <Input
-              placeholder="Enter new password"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
+              <Input
+                placeholder="Birth City"
+                onChange={(e) =>
+                  setAnswers({ ...answers, answer3: e.target.value })
+                }
+              />
 
-            <Button
-              colorScheme="green"
-              width="100%"
-              onClick={handleResetPassword}
-            >
-              Reset Password
-            </Button>
-          </>
-        )}
+              <Button colorScheme="green" width="100%" onClick={handleAnswerCheck}>
+                Verify
+              </Button>
+            </>
+          )}
 
-      </VStack>
+          {/* STEP 3 */}
+          {step === 3 && (
+            <>
+              <Input
+                placeholder="Enter new password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+
+              <Button colorScheme="green" width="100%" onClick={handleResetPassword}>
+                Reset Password
+              </Button>
+            </>
+          )}
+
+        </VStack>
+      </Box>
     </Box>
   );
 }

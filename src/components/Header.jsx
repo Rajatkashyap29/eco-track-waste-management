@@ -1,15 +1,23 @@
-import { Flex, Text, Button } from "@chakra-ui/react";
+import {
+  Flex,
+  Text,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from "@chakra-ui/react";
+
 import { useNavigate } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
 
-  const about_us = () => {
-    alert("jaldi aane wala hai ");
-  };
+  const role = localStorage.getItem("role");
 
-  const contact_us = () => {
-    alert("wait karo ek do din");
+  const logout = () => {
+    localStorage.removeItem("role");
+    navigate("/");
   };
 
   return (
@@ -20,28 +28,89 @@ function Header() {
       justify="space-between"
       align="center"
     >
-      {/* Left Side */}
-      <Text fontSize="xl" fontWeight="bold" cursor="pointer" onClick={() => navigate("/")}>
+      {/* LOGO */}
+      <Text
+        fontSize="xl"
+        fontWeight="bold"
+        cursor="pointer"
+        onClick={() => navigate("/")}
+      >
         EcoTrack ♻️
       </Text>
 
-      {/* Right Side */}
-      <Flex gap={4}>
-        <Button variant="ghost" color="white" onClick={about_us}>
-          About
-        </Button>
+      {/* RIGHT SIDE */}
+      <Flex gap={4} align="center">
 
-        <Button variant="ghost" color="white" onClick={contact_us}>
-          Contact
-        </Button>
+        {/* ❌ NOT LOGGED IN */}
+        {!role && (
+          <>
+            <Button variant="ghost" color="white">About</Button>
+            <Button variant="ghost" color="white">Contact</Button>
+            <Button onClick={() => navigate("/login")}>Login</Button>
+            <Button colorScheme="teal" onClick={() => navigate("/register")}>
+              Register
+            </Button>
+          </>
+        )}
 
-        <Button colorScheme="blackAlpha" onClick={() => navigate("/login")}>
-          Login
-        </Button>
+        {/* ✅ LOGGED IN */}
+        {role && (
+          <>
+            <Button variant="ghost" color="white" onClick={() => navigate("/user")}>
+              Dashboard
+            </Button>
 
-        <Button colorScheme="teal" onClick={() => navigate("/register")}>
-          Register
-        </Button>
+            <Button variant="ghost" color="white">
+              Report Waste
+            </Button>
+
+            <Button variant="ghost" color="white">
+              My Complaints
+            </Button>
+
+            <Button variant="ghost" color="white">
+              Helpdesk
+            </Button>
+
+            <Button variant="ghost" color="white">
+              About Us
+            </Button>
+
+            {/* 🔥 PROFILE DROPDOWN */}
+            {/* 🔥 PROFILE DROPDOWN */}
+<Menu>
+  <MenuButton
+    as={Button}
+    variant="ghost"     // ✅ same as others
+    color="white"
+  >
+    Profile
+  </MenuButton>
+
+  <MenuList
+    bg="white"
+    color="black"
+    borderRadius="md"
+    boxShadow="lg"
+  >
+    <MenuItem
+      _hover={{ bg: "gray.100" }}
+      onClick={() => navigate("/profile")}
+    >
+      My Profile
+    </MenuItem>
+
+    <MenuItem
+      _hover={{ bg: "red.100", color: "red.600" }}
+      onClick={logout}
+    >
+      Logout
+    </MenuItem>
+  </MenuList>
+</Menu>
+          </>
+        )}
+
       </Flex>
     </Flex>
   );

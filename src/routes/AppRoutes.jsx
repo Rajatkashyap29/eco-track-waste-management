@@ -8,49 +8,29 @@ import ForgotPassword from "../pages/Auth/ForgotPassword";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import UserDashboard from "../pages/User/UserDashboard";
 import StaffDashboard from "../pages/Staff/StaffDashboard";
+import Profile from "../pages/Profile/Profile";
 
-import Layout from "../components/Layout"; // ✅ add this
+import Layout from "../components/Layout";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* Landing (no layout) */}
-        <Route path="/" element={<LandingPage />} />
+        {/* Landing (optional layout or separate) */}
+        <Route path="/" element={<Layout><LandingPage /></Layout>} />
 
-        {/* Auth Pages with Layout */}
-        <Route
-          path="/login"
-          element={
-            <Layout>
-              <Login />
-            </Layout>
-          }
-        />
+        {/* Auth */}
+        <Route path="/login" element={<Layout><Login /></Layout>} />
+        <Route path="/register" element={<Layout><Register /></Layout>} />
+        <Route path="/forgot-password" element={<Layout><ForgotPassword /></Layout>} />
 
-        <Route
-          path="/register"
-          element={
-            <Layout>
-              <Register />
-            </Layout>
-          }
-        />
+        {/* USER FLOW (IMPORTANT 🔥) */}
+        <Route path="/profile" element={<Layout><Profile /></Layout>} />
 
-        <Route
-          path="/forgot-password"
-          element={
-            <Layout>
-              <ForgotPassword />
-            </Layout>
-          }
-        />
-
-        {/* Dashboards (optional: layout later) */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/user" element={<UserDashboard />} />
-        <Route path="/staff" element={<StaffDashboard />} />
+        <Route path="/admin" element={<Layout><AdminDashboard /></Layout>} />
+        <Route path="/user" element={<Layout><UserDashboard /></Layout>} />
+        <Route path="/staff" element={<Layout><StaffDashboard /></Layout>} />
 
       </Routes>
     </BrowserRouter>

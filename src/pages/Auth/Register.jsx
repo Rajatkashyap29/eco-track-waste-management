@@ -52,9 +52,6 @@ function Register() {
       confirmPassword,
       address,
       pincode,
-      security1,
-      security2,
-      security3,
       answer1,
       answer2,
       answer3,
@@ -68,9 +65,6 @@ function Register() {
       !confirmPassword ||
       !address ||
       !pincode ||
-      !security1 ||
-      !security2 ||
-      !security3 ||
       !answer1 ||
       !answer2 ||
       !answer3
@@ -94,15 +88,7 @@ function Register() {
       return;
     }
 
-    // ❗ Duplicate question check
-    if (
-      security1 === security2 ||
-      security2 === security3 ||
-      security1 === security3
-    ) {
-      toast({ title: "Choose different security questions", status: "error" });
-      return;
-    }
+
 
     toast({ title: "Registration Successful", status: "success" });
 
@@ -111,33 +97,54 @@ function Register() {
     navigate("/login");
   };
 
-  return (
+ return (
+  <Box
+    minH="100vh"
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    bg="gray.100"
+    px={4}
+  >
     <Box
       bg="white"
       p={8}
       borderRadius="xl"
       boxShadow="lg"
       width="100%"
+      maxW="650px"
       position="relative"
     >
+
       {/* ❌ CLOSE BUTTON */}
       <IconButton
         icon={<CloseIcon />}
         size="sm"
+        variant="ghost"
+        color="gray.600"
         position="absolute"
-        top="10px"
-        right="10px"
+        top="12px"
+        right="12px"
+        _hover={{ bg: "gray.100" }}
         onClick={() => navigate("/")}
       />
 
-      <VStack spacing={5}>
-
+      {/* HEADER */}
+      <VStack spacing={1} mb={6}>
         <Text fontSize="2xl" fontWeight="bold">
           Create Account
         </Text>
+        <Text fontSize="sm" color="gray.500">
+          Join EcoTrack and help keep your city clean
+        </Text>
+      </VStack>
 
+      <VStack spacing={4} align="stretch">
+
+        {/* BASIC INFO */}
         <Input placeholder="Full Name" name="name" onChange={handleChange} />
         <Input placeholder="Email" name="email" onChange={handleChange} />
+
         <Input placeholder="Phone Number" name="phone" onChange={handleChange} />
 
         <Input placeholder="Password" type="password" name="password" onChange={handleChange} />
@@ -151,41 +158,70 @@ function Register() {
         <Input placeholder="Address" name="address" onChange={handleChange} />
         <Input placeholder="Pincode" name="pincode" onChange={handleChange} />
 
-        {/* 🔐 SECURITY QUESTIONS */}
-        <Text fontWeight="semibold">Security Questions</Text>
+       
+        {/* SECURITY SECTION */}
+        <Box pt={4} mt={2}>
+          <Text fontSize="md" fontWeight="semibold" mb={3}>
+            Security Questions
+          </Text>
 
-        <Select name="security1" onChange={handleChange}>
-          <option value="">Select Question 1</option>
-          <option value="pet">Pet Name</option>
-          <option value="teacher">Favorite Teacher</option>
-          <option value="city">Birth City</option>
-        </Select>
-        <Input placeholder="Answer" name="answer1" onChange={handleChange} />
+          <VStack spacing={4} align="stretch">
 
-        <Select name="security2" onChange={handleChange}>
-          <option value="">Select Question 2</option>
-          <option value="pet">Pet Name</option>
-          <option value="teacher">Favorite Teacher</option>
-          <option value="city">Birth City</option>
-        </Select>
-        <Input placeholder="Answer" name="answer2" onChange={handleChange} />
+            {/* Q1 */}
+            <Box>
+              <Text fontSize="sm" color="gray.600" mb={1}>
+                1. What is your Pet Name?
+              </Text>
+              <Input
+                placeholder="Enter Answer"
+                name="answer1"
+                onChange={handleChange}
+              />
+            </Box>
 
-        <Select name="security3" onChange={handleChange}>
-          <option value="">Select Question 3</option>
-          <option value="pet">Pet Name</option>
-          <option value="teacher">Favorite Teacher</option>
-          <option value="city">Birth City</option>
-        </Select>
-        <Input placeholder="Answer" name="answer3" onChange={handleChange} />
+            {/* Q2 */}
+            <Box>
+              <Text fontSize="sm" color="gray.600" mb={1}>
+                2. Who was your Favorite Teacher?
+              </Text>
+              <Input
+                placeholder="Enter Answer"
+                name="answer2"
+                onChange={handleChange}
+              />
+            </Box>
 
-        <Button colorScheme="green" width="100%" onClick={handleRegister}>
+            {/* Q3 */}
+            <Box>
+              <Text fontSize="sm" color="gray.600" mb={1}>
+                3. What is your Birth City?
+              </Text>
+              <Input
+                placeholder="Enter Answer"
+                name="answer3"
+                onChange={handleChange}
+              />
+            </Box>
+
+          </VStack>
+        </Box>
+
+        {/* BUTTON */}
+        <Button
+          colorScheme="green"
+          width="100%"
+          size="md"
+          mt={3}
+          onClick={handleRegister}
+        >
           Register
         </Button>
 
-        <Text fontSize="sm">
+        {/* LOGIN LINK */}
+        <Text fontSize="sm" textAlign="center">
           Already have an account?{" "}
           <span
-            style={{ color: "blue", cursor: "pointer" }}
+            style={{ color: "#3182ce", cursor: "pointer", fontWeight: "500" }}
             onClick={() => navigate("/login")}
           >
             Login
@@ -194,7 +230,8 @@ function Register() {
 
       </VStack>
     </Box>
-  );
+  </Box>
+);
 }
 
 export default Register;

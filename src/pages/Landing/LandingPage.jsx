@@ -15,10 +15,14 @@ function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <Flex direction="column" minH="100vh">
-
-      {/* HEADER */}
-      <Header />
+    <Flex
+      align="center"
+      justify="center"
+      bg="gray.50"
+      px={4}
+      py={20}
+      textAlign="center"
+    >
 
       {/* HERO SECTION */}
       <Flex
@@ -28,6 +32,7 @@ function LandingPage() {
         bg="gray.50"
         textAlign="center"
         px={4}
+        py={16}  
       >
         <VStack spacing={6} maxW="600px">
           
@@ -62,8 +67,6 @@ function LandingPage() {
         </VStack>
       </Flex>
 
-      {/* FOOTER */}
-      <Footer />
 
     </Flex>
   );

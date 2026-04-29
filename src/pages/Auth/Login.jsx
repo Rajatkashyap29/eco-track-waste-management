@@ -27,6 +27,7 @@ function Login() {
     } 
     else if (email === "user@gmail.com" && password === "123") {
       toast({ title: "User Login Success", status: "success" });
+      localStorage.setItem("role", "user");
       navigate("/user");
     } 
     else if (email === "staff@gmail.com" && password === "123") {
@@ -47,14 +48,24 @@ function Login() {
   };
 
   return (
+  <Box
+    minH="80vh"
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    bg="gray.50"
+    px={4}
+  >
     <Box
       bg="white"
       p={8}
       borderRadius="xl"
       boxShadow="lg"
       width="100%"
+      maxW="500px"   
       position="relative"
     >
+
       {/* ❌ CLOSE */}
       <IconButton
         icon={<CloseIcon />}
@@ -112,8 +123,10 @@ function Login() {
         </Text>
 
       </VStack>
+
     </Box>
-  );
+  </Box>
+);
 }
 
 export default Login;

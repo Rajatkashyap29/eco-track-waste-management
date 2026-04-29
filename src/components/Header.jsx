@@ -20,6 +20,8 @@ function Header() {
     navigate("/");
   };
 
+  
+
   return (
     <Flex
       bg="green.400"
@@ -45,7 +47,9 @@ function Header() {
         {!role && (
           <>
             <Button variant="ghost" color="white">About</Button>
-            <Button variant="ghost" color="white">Contact</Button>
+            <Button variant="ghost" color="white" onClick={() => navigate("/help")}>
+              Helpdesk
+            </Button>
             <Button onClick={() => navigate("/login")}>Login</Button>
             <Button colorScheme="teal" onClick={() => navigate("/register")}>
               Register
@@ -60,15 +64,16 @@ function Header() {
               Dashboard
             </Button>
 
-            <Button variant="ghost" color="white">
+            <Button variant="ghost" color="white" onClick={() => navigate("/report-waste")}>
               Report Waste
             </Button>
+            
 
-            <Button variant="ghost" color="white">
+            <Button variant="ghost" color="white" onClick={() => navigate("/complaints")}>
               My Complaints
             </Button>
 
-            <Button variant="ghost" color="white">
+            <Button variant="ghost" color="white" onClick={() => navigate("/help")}>
               Helpdesk
             </Button>
 
@@ -101,13 +106,13 @@ function Header() {
     </MenuItem>
 
     <MenuItem
-      _hover={{ bg: "red.100", color: "red.600" }}
-      onClick={logout}
-    >
-      Logout
-    </MenuItem>
-  </MenuList>
-</Menu>
+                _hover={{ bg: "red.100", color: "red.600" }}
+                onClick={logout}
+              >
+                Logout
+              </MenuItem>
+            </MenuList>
+          </Menu>
           </>
         )}
 

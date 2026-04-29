@@ -27,12 +27,8 @@ function Register() {
     role: "user",
     address: "",
     pincode: "",
-
-    security1: "",
     answer1: "",
-    security2: "",
     answer2: "",
-    security3: "",
     answer3: "",
   });
 

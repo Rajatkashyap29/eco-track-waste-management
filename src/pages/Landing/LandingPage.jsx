@@ -37,11 +37,11 @@ function LandingPage() {
         <VStack spacing={6} maxW="600px">
           
           <Text color="green.500" fontWeight="semibold">
-            Smart Waste Management
+            Smart Waste Management 
           </Text>
 
           <Text fontSize="5xl" fontWeight="bold" lineHeight="1.2">
-            Keep Your City Clean & Organized
+            Keep Your City Clean & Organized 🍀
           </Text>
 
           <Text fontSize="lg" color="gray.600">

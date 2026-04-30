@@ -20,19 +20,18 @@ function Header() {
     navigate("/");
   };
 
-  
-
   return (
     <Flex
       bg="green.400"
       color="white"
-      p={4}
+      px={6}
+      py={3}
       justify="space-between"
       align="center"
     >
       {/* LOGO */}
       <Text
-        fontSize="xl"
+        fontSize="lg"
         fontWeight="bold"
         cursor="pointer"
         onClick={() => navigate("/")}
@@ -40,8 +39,8 @@ function Header() {
         EcoTrack ♻️
       </Text>
 
-      {/* RIGHT SIDE */}
-      <Flex gap={4} align="center">
+      {/* NAV */}
+      <Flex gap={5} align="center">
 
         {/* ❌ NOT LOGGED IN */}
         {!role && (
@@ -57,8 +56,8 @@ function Header() {
           </>
         )}
 
-        {/* ✅ LOGGED IN */}
-        {role && (
+        {/* 🟢 USER */}
+        {role === "user" && (
           <>
             <Button variant="ghost" color="white" onClick={() => navigate("/user")}>
               Dashboard
@@ -67,7 +66,6 @@ function Header() {
             <Button variant="ghost" color="white" onClick={() => navigate("/report-waste")}>
               Report Waste
             </Button>
-            
 
             <Button variant="ghost" color="white" onClick={() => navigate("/complaints")}>
               My Complaints
@@ -80,32 +78,72 @@ function Header() {
             <Button variant="ghost" color="white">
               About Us
             </Button>
+          </>
+        )}
 
-            {/* 🔥 PROFILE DROPDOWN */}
-            {/* 🔥 PROFILE DROPDOWN */}
-<Menu>
-  <MenuButton
-    as={Button}
-    variant="ghost"     // ✅ same as others
-    color="white"
-  >
-    Profile
-  </MenuButton>
+        {/* 🔴 ADMIN */}
+        {role === "admin" && (
+          <>
+            <Button variant="ghost" color="white" onClick={() => navigate("/admin")}>
+              Dashboard
+            </Button>
 
-  <MenuList
-    bg="white"
-    color="black"
-    borderRadius="md"
-    boxShadow="lg"
-  >
-    <MenuItem
-      _hover={{ bg: "gray.100" }}
-      onClick={() => navigate("/profile")}
-    >
-      My Profile
-    </MenuItem>
+            <Button variant="ghost" color="white">
+              Users
+            </Button>
 
-    <MenuItem
+            <Button variant="ghost" color="white">
+              Staff
+            </Button>
+
+            <Button variant="ghost" color="white" onClick={() => navigate("/request")}>
+              Cleaning Requests
+            </Button>
+
+            <Button variant="ghost" color="white">
+              Complaints
+            </Button>
+
+            <Button variant="ghost" color="white">
+              About Us
+            </Button>
+          </>
+        )}
+
+        {/* 🔵 STAFF */}
+        {role === "staff" && (
+          <>
+            <Button variant="ghost" color="white" onClick={() => navigate("/staff")}>
+              Dashboard
+            </Button>
+
+            <Button variant="ghost" color="white">
+              Assigned Tasks
+            </Button>
+
+            <Button variant="ghost" color="white">
+              Update Status
+            </Button>
+
+            <Button variant="ghost" color="white">
+              Helpdesk
+            </Button>
+          </>
+        )}
+
+        {/* 🔥 PROFILE (COMMON) */}
+        {role && (
+          <Menu>
+            <MenuButton as={Button} variant="ghost" color="white">
+              Profile
+            </MenuButton>
+
+            <MenuList bg="white" color="black">
+              <MenuItem onClick={() => navigate("/profile")}>
+                My Profile
+              </MenuItem>
+
+              <MenuItem
                 _hover={{ bg: "red.100", color: "red.600" }}
                 onClick={logout}
               >
@@ -113,7 +151,6 @@ function Header() {
               </MenuItem>
             </MenuList>
           </Menu>
-          </>
         )}
 
       </Flex>

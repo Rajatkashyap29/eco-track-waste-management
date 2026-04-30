@@ -23,6 +23,7 @@ function Login() {
   const handleLogin = () => {
     if (email === "admin@gmail.com" && password === "123") {
       toast({ title: "Admin Login Success", status: "success" });
+      localStorage.setItem("role", "admin");
       navigate("/admin");
     } 
     else if (email === "user@gmail.com" && password === "123") {

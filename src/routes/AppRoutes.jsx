@@ -10,13 +10,12 @@ import UserDashboard from "../pages/User/UserDashboard";
 import ReportWaste from "../pages/User/ReportWaste"
 import ComplaintDetail from "../pages/User/ComplaintDetail"
 import MyComplaints  from "../pages/User/MyComplaints"
-
 import StaffDashboard from "../pages/Staff/StaffDashboard";
 import Profile from "../pages/Profile/Profile";
-
 import HelpDesk from "../pages/shared/HelpDesk"
-
 import Layout from "../components/Layout";
+import CleaningRequests from "../pages/Admin/CleaningRequests"
+import CleaningRequestDetail from  "../pages/Admin/CleaningRequestDetail"
 
 function AppRoutes() {
   return (
@@ -33,7 +32,6 @@ function AppRoutes() {
 
         {/* USER FLOW (IMPORTANT 🔥) */}
         <Route path="/profile" element={<Layout><Profile /></Layout>} />
-
         <Route path="/admin" element={<Layout><AdminDashboard /></Layout>} />
         <Route path="/user" element={<Layout><UserDashboard /></Layout>} />
         <Route path="/staff" element={<Layout><StaffDashboard /></Layout>} />
@@ -43,7 +41,10 @@ function AppRoutes() {
         <Route path="/complaints" element={<Layout><MyComplaints /> </Layout>} />
         <Route path="/complaint/:id" element={<Layout><ComplaintDetail /> </Layout>} />
 
-
+        <Route path="/request" element={<Layout><CleaningRequests /> </Layout>} />
+        <Route path="/request/:id" element={<Layout><CleaningRequestDetail /> </Layout>} />
+        
+        
 
         <Route path="/help/" element={<Layout><HelpDesk /> </Layout>} />
 

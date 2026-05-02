@@ -1,10 +1,12 @@
 import {
   Box,
   Text,
-  Button,
-  Select,
   VStack,
   Badge,
+  Select,
+  Button,
+  SimpleGrid,
+  Image,
   useToast,
 } from "@chakra-ui/react";
 
@@ -15,69 +17,135 @@ function CleaningRequestDetail() {
   const { id } = useParams();
   const toast = useToast();
 
+  // 🔥 dummy full data (later backend)
+  const request = {
+    id,
+    title: "Garbage near market",
+    wasteType: "Mixed",
+    volume: "Large",
+    description: "Huge garbage pile near main road causing smell",
+    extra: "Near temple side",
+
+    images: [
+      "https://via.placeholder.com/150",
+      "https://via.placeholder.com/150",
+      "https://via.placeholder.com/150",
+    ],
+
+    pincode: "834001",
+    ward: "12",
+    city: "Ranchi",
+    street: "Main Road",
+    landmark: "Near Hanuman Temple",
+    locationExtra: "Backside lane",
+
+    date: "29 Apr 2026",
+  };
+
   const [status, setStatus] = useState("Pending");
   const [staff, setStaff] = useState("");
 
+  // ✅ Assign
   const handleAssign = () => {
     if (!staff) {
-      toast({ title: "Select staff", status: "error" });
+      toast({ title: "Select staff first", status: "error" });
       return;
     }
 
     setStatus("Assigned");
-    toast({ title: "Staff Assigned", status: "success" });
+    toast({ title: "Staff Assigned ✅", status: "success" });
   };
 
+  // ✅ Complete
   const handleComplete = () => {
     setStatus("Completed");
-    toast({ title: "Marked as Completed", status: "success" });
+    toast({ title: "Marked Completed ✅", status: "success" });
   };
 
   return (
-    <Box maxW="700px" mx="auto" p={6}>
+    <Box maxW="900px" mx="auto" p={6}>
 
+      {/* HEADER */}
       <Text fontSize="2xl" fontWeight="bold" mb={4}>
-        Request #{id}
+        Cleaning Request #{request.id}
       </Text>
 
-      <VStack align="start" spacing={3}>
+      <Badge
+        mb={4}
+        colorScheme={
+          status === "Completed"
+            ? "green"
+            : status === "Pending"
+            ? "red"
+            : "yellow"
+        }
+      >
+        {status}
+      </Badge>
 
-        <Text><b>Waste Type:</b> Dry</Text>
-        <Text><b>Volume:</b> Medium</Text>
-        <Text><b>Location:</b> Ranchi, Ward 12</Text>
-        <Text><b>Description:</b> Garbage pile near road</Text>
+      <VStack align="stretch" spacing={6}>
 
-        <Badge
-          colorScheme={
-            status === "Completed"
-              ? "green"
-              : status === "Pending"
-              ? "red"
-              : "yellow"
-          }
-        >
-          {status}
-        </Badge>
+        {/* 🔥 WASTE DETAILS */}
+        <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
+          <Text fontWeight="bold" mb={3}>Waste Details</Text>
 
-        {/* ASSIGN STAFF */}
-        <Select
-          placeholder="Select Staff"
-          onChange={(e) => setStaff(e.target.value)}
-        >
-          <option value="staff1">Staff 1</option>
-          <option value="staff2">Staff 2</option>
-        </Select>
+          <Text><b>Title:</b> {request.title}</Text>
+          <Text><b>Type:</b> {request.wasteType}</Text>
+          <Text><b>Volume:</b> {request.volume}</Text>
+          <Text><b>Description:</b> {request.description}</Text>
+          <Text><b>Additional Info:</b> {request.extra}</Text>
+        </Box>
 
-        <Button colorScheme="blue" onClick={handleAssign}>
-          Assign Staff
-        </Button>
+        {/* 🖼️ IMAGES */}
+        <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
+          <Text fontWeight="bold" mb={3}>Images</Text>
 
-        {/* COMPLETE */}
-        {status === "Assigned" && (
-          <Button colorScheme="green" onClick={handleComplete}>
-            Mark as Completed
-          </Button>
-        )}
+          <SimpleGrid columns={[1, 3]} spacing={4}>
+            {request.images.map((img, i) => (
+              <Image
+                key={i}
+                src={img}
+                borderRadius="md"
+                objectFit="cover"
+              />
+            ))}
+          </SimpleGrid>
+        </Box>
+
+        {/* 📍 LOCATION */}
+        <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
+          <Text fontWeight="bold" mb={3}>Location Details</Text>
+
+          <Text><b>Pincode:</b> {request.pincode}</Text>
+          <Text><b>Ward No:</b> {request.ward}</Text>
+          <Text><b>City:</b> {request.city}</Text>
+          <Text><b>Street:</b> {request.street}</Text>
+          <Text><b>Landmark:</b> {request.landmark}</Text>
+          <Text><b>Extra Info:</b> {request.locationExtra}</Text>
+        </Box>
+
+        {/* ⚙️ ACTION SECTION */}
+        <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
+          <Text fontWeight="bold" mb={3}>Admin Actions</Text>
+
+          <VStack align="stretch" spacing={3}>
+
+            <Select
+              placeholder="Select Staff"
+              onChange={(e) => setStaff(e.target.value)}
+            >
+              <option value="staff1">Staff 1</option>
+              <option value="staff2">Staff 2</option>
+              <option value="staff3">Staff 3</option>
+            </Select>
+
+            <Button colorScheme="blue" onClick={handleAssign}>
+              Assign Staff
+            </Button>
+
+
+          </VStack>
+        </Box>
 
       </VStack>
     </Box>

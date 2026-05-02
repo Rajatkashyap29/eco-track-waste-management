@@ -33,6 +33,7 @@ function Login() {
     } 
     else if (email === "staff@gmail.com" && password === "123") {
       toast({ title: "Staff Login Success", status: "success" });
+      localStorage.setItem("role", "staff");
       navigate("/staff");
     } 
     else {

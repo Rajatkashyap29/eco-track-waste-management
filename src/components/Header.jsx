@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
-
   const role = localStorage.getItem("role");
 
   const logout = () => {
@@ -40,16 +39,23 @@ function Header() {
       </Text>
 
       {/* NAV */}
-      <Flex gap={5} align="center">
+      <Flex gap={4} align="center">
 
         {/* ❌ NOT LOGGED IN */}
         {!role && (
           <>
-            <Button variant="ghost" color="white">About</Button>
+            <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
+              About
+            </Button>
+
             <Button variant="ghost" color="white" onClick={() => navigate("/help")}>
               Helpdesk
             </Button>
-            <Button onClick={() => navigate("/login")}>Login</Button>
+
+            <Button colorScheme="whiteAlpha" onClick={() => navigate("/login")}>
+              Login
+            </Button>
+
             <Button colorScheme="teal" onClick={() => navigate("/register")}>
               Register
             </Button>
@@ -74,10 +80,6 @@ function Header() {
             <Button variant="ghost" color="white" onClick={() => navigate("/help")}>
               Helpdesk
             </Button>
-
-            <Button variant="ghost" color="white">
-              About Us
-            </Button>
           </>
         )}
 
@@ -88,11 +90,11 @@ function Header() {
               Dashboard
             </Button>
 
-            <Button variant="ghost" color="white">
+            <Button variant="ghost" color="white" onClick={() => navigate("/user-list")}>
               Users
             </Button>
 
-            <Button variant="ghost" color="white">
+            <Button variant="ghost" color="white" onClick={() => navigate("/staff-list")}>
               Staff
             </Button>
 
@@ -100,12 +102,8 @@ function Header() {
               Cleaning Requests
             </Button>
 
-            <Button variant="ghost" color="white">
+            <Button variant="ghost" color="white" onClick={() => navigate("/admin/complaints")}>
               Complaints
-            </Button>
-
-            <Button variant="ghost" color="white">
-              About Us
             </Button>
           </>
         )}
@@ -117,29 +115,38 @@ function Header() {
               Dashboard
             </Button>
 
-            <Button variant="ghost" color="white">
-              Assigned Tasks
+            <Button variant="ghost" color="white" onClick={() => navigate("/staff/tasks")}>
+              My Tasks
             </Button>
 
-            <Button variant="ghost" color="white">
-              Update Status
-            </Button>
-
-            <Button variant="ghost" color="white">
+            <Button variant="ghost" color="white" onClick={() => navigate("/help")}>
               Helpdesk
             </Button>
           </>
         )}
 
-        {/* 🔥 PROFILE (COMMON) */}
+        {/* COMMON */}
+        <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
+          About
+        </Button>
+
         {role && (
           <Menu>
             <MenuButton as={Button} variant="ghost" color="white">
               Profile
             </MenuButton>
 
-            <MenuList bg="white" color="black">
-              <MenuItem onClick={() => navigate("/profile")}>
+            <MenuList
+              bg="white"
+              color="gray.800"     // ✅ FIX: readable text
+              borderRadius="md"
+              boxShadow="lg"
+              minW="150px"
+            >
+              <MenuItem
+                _hover={{ bg: "gray.100" }}
+                onClick={() => navigate("/profile")}
+              >
                 My Profile
               </MenuItem>
 
@@ -152,7 +159,6 @@ function Header() {
             </MenuList>
           </Menu>
         )}
-
       </Flex>
     </Flex>
   );

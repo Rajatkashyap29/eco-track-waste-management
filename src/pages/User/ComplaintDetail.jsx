@@ -4,50 +4,107 @@ import {
   VStack,
   Badge,
   Divider,
+  Spinner,
+  Flex,
+  Image,
 } from "@chakra-ui/react";
 
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import API from "../../api/axios";
 
 function ComplaintDetail() {
   const { id } = useParams();
 
-  const data = {
-    id,
-    title: "Garbage Overflow Near Park",
-    status: "Pending",
-    date: "2026-04-29",
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    // 🔥 WASTE DETAILS
-    wasteType: "Mixed",
-    volume: "Large",
-    description: "Huge garbage pile causing smell",
-    extra: "Nearby school affected",
-
-    // 📍 LOCATION
-    pincode: "800001",
-    ward: "12",
-    city: "Patna",
-    street: "Main Road",
-    landmark: "Near Park",
-    locationExtra: "Behind temple",
+  // 🔥 API CALL
+  const fetchComplaint = async () => {
+    try {
+      const res = await API.get(`/complaints/${id}`);
+      setData(res.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    fetchComplaint();
+  }, [id]);
+
+  // 🎨 STATUS COLOR
+  const getStatusColor = (status) => {
+    if (status === "completed") return "green";
+    if (status === "pending") return "red";
+    return "yellow";
+  };
+
+  // 🔄 LOADING
+  if (loading) {
+    return (
+      <Flex justify="center" mt={10}>
+        <Spinner size="xl" />
+      </Flex>
+    );
+  }
+
+  // ❌ NO DATA
+  if (!data) {
+    return (
+      <Text textAlign="center" mt={10}>
+        Complaint not found
+      </Text>
+    );
+  }
+
   return (
-    <Box p={6}>
+    <Box p={6} maxW="800px" mx="auto">
       <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
 
         <VStack align="start" spacing={4}>
 
           <Text fontSize="2xl" fontWeight="bold">
-            Complaint #{data.id}
+            Complaint #{data._id?.slice(-5)}
           </Text>
 
-          <Badge colorScheme="yellow">{data.status}</Badge>
+          <Badge colorScheme={getStatusColor(data.status)}>
+            {data.status}
+          </Badge>
 
           <Text><b>Title:</b> {data.title}</Text>
-          <Text><b>Date:</b> {data.date}</Text>
+
+          <Text>
+            <b>Date:</b>{" "}
+            {new Date(data.createdAt).toLocaleDateString()}
+          </Text>
 
           <Divider />
+
+          {/* 🖼️ IMAGES */}
+          {data.images?.length > 0 && (
+            <>
+              <Text fontSize="lg" fontWeight="semibold">
+                Images
+              </Text>
+
+              <Flex gap={3} wrap="wrap">
+                {data.images.map((img, i) => (
+                  <Image
+                    key={i}
+                    src={`${import.meta.env.VITE_API_URL.replace("/api","")}/${img}`}
+                    boxSize="120px"
+                    objectFit="cover"
+                    borderRadius="md"
+                  />
+                ))}
+              </Flex>
+
+              <Divider />
+            </>
+          )}
 
           {/* 🗑️ WASTE DETAILS */}
           <Text fontSize="lg" fontWeight="semibold">
@@ -61,7 +118,7 @@ function ComplaintDetail() {
 
           <Divider />
 
-          {/* 📍 LOCATION DETAILS */}
+          {/* 📍 LOCATION */}
           <Text fontSize="lg" fontWeight="semibold">
             Location Details
           </Text>
@@ -74,7 +131,6 @@ function ComplaintDetail() {
           <Text><b>Extra Info:</b> {data.locationExtra}</Text>
 
         </VStack>
-
       </Box>
     </Box>
   );

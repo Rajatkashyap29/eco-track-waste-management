@@ -32,7 +32,8 @@ function HelpDesk() {
     });
   };
 
-  const handleSubmit = () => {
+  // 🔥 API CALL
+  const handleSubmit = async () => {
     const { topic, description, phone, email } = form;
 
     if (!topic || !description || !phone || !email) {
@@ -40,9 +41,44 @@ function HelpDesk() {
       return;
     }
 
-    toast({ title: "Ticket Raised Successfully", status: "success" });
+    try {
+      const token = localStorage.getItem("token");
 
-    console.log(form);
+      const res = await fetch("http://localhost:5000/api/tickets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // 🔥 IMPORTANT
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      toast({ title: "Ticket Raised Successfully ✅", status: "success" });
+
+      // 🔄 reset form
+      setForm({
+        role: "user",
+        topic: "",
+        complaintId: "",
+        description: "",
+        phone: "",
+        email: "",
+        department: "",
+        priority: "medium",
+      });
+
+    } catch (err) {
+      toast({
+        title: err.message || "Error raising ticket",
+        status: "error",
+      });
+    }
   };
 
   return (
@@ -70,7 +106,7 @@ function HelpDesk() {
         {/* ROLE */}
         <Box>
           <Text fontSize="sm" mb={1}>Role</Text>
-          <Select name="role" onChange={handleChange} bg="gray.50">
+          <Select name="role" value={form.role} onChange={handleChange} bg="gray.50">
             <option value="user">User</option>
             <option value="staff">Staff</option>
           </Select>
@@ -79,17 +115,15 @@ function HelpDesk() {
         {/* TOPIC */}
         <Box>
           <Text fontSize="sm" mb={1}>Select Topic *</Text>
-          <Select name="topic" onChange={handleChange} bg="gray.50">
+          <Select name="topic" value={form.topic} onChange={handleChange} bg="gray.50">
             <option value="">Choose topic</option>
 
-            {/* USER */}
             <option value="escalation">Complaint Escalation</option>
             <option value="login">Login Issue</option>
             <option value="register">Registration Issue</option>
             <option value="raise">Unable to Raise Complaint</option>
             <option value="wrong-status">Wrong Complaint Status</option>
 
-            {/* STAFF */}
             <option value="not-assigned">Complaint Not Assigned</option>
             <option value="update-issue">Unable to Update Status</option>
             <option value="data-error">Incorrect Data / Location</option>
@@ -104,18 +138,20 @@ function HelpDesk() {
           <Text fontSize="sm" mb={1}>Complaint ID (optional)</Text>
           <Input
             name="complaintId"
+            value={form.complaintId}
             onChange={handleChange}
             bg="gray.50"
           />
         </Box>
 
-        {/* STAFF ONLY FIELD */}
+        {/* STAFF ONLY */}
         {form.role === "staff" && (
           <>
             <Box>
               <Text fontSize="sm" mb={1}>Department / Zone</Text>
               <Input
                 name="department"
+                value={form.department}
                 onChange={handleChange}
                 bg="gray.50"
               />
@@ -123,7 +159,12 @@ function HelpDesk() {
 
             <Box>
               <Text fontSize="sm" mb={1}>Priority</Text>
-              <Select name="priority" onChange={handleChange} bg="gray.50">
+              <Select
+                name="priority"
+                value={form.priority}
+                onChange={handleChange}
+                bg="gray.50"
+              >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -137,6 +178,7 @@ function HelpDesk() {
           <Text fontSize="sm" mb={1}>Description *</Text>
           <Textarea
             name="description"
+            value={form.description}
             onChange={handleChange}
             bg="gray.50"
             rows={4}
@@ -147,6 +189,7 @@ function HelpDesk() {
         <Input
           placeholder="Phone Number *"
           name="phone"
+          value={form.phone}
           onChange={handleChange}
           bg="gray.50"
         />
@@ -154,11 +197,11 @@ function HelpDesk() {
         <Input
           placeholder="Email *"
           name="email"
+          value={form.email}
           onChange={handleChange}
           bg="gray.50"
         />
 
-        {/* BUTTON */}
         <Button colorScheme="green" mt={3} onClick={handleSubmit}>
           Raise Ticket
         </Button>

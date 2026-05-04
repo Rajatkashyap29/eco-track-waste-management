@@ -12,7 +12,8 @@ import { CloseIcon } from "@chakra-ui/icons";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import API from "../../api/axios";
+ 
 function Login() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -20,24 +21,38 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (email === "admin@gmail.com" && password === "123") {
-      toast({ title: "Admin Login Success", status: "success" });
-      localStorage.setItem("role", "admin");
-      navigate("/admin");
-    } 
-    else if (email === "user@gmail.com" && password === "123") {
-      toast({ title: "User Login Success", status: "success" });
-      localStorage.setItem("role", "user");
-      navigate("/user");
-    } 
-    else if (email === "staff@gmail.com" && password === "123") {
-      toast({ title: "Staff Login Success", status: "success" });
-      localStorage.setItem("role", "staff");
-      navigate("/staff");
-    } 
-    else {
-      toast({ title: "Invalid Credentials", status: "error" });
+
+
+  const handleLogin = async () => {
+
+
+    if (!email || !password) {
+      toast({ title: "All fields required", status: "error" });
+      return;
+    }
+
+    try {
+      const res = await API.post("/auth/login", {
+        email,
+        password,
+      });
+
+      // 🔥 SAVE DATA
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
+
+      toast({ title: "Login Successful", status: "success" });
+
+      // 🔀 REDIRECT
+      if (res.data.role === "admin") navigate("/admin");
+      else if (res.data.role === "staff") navigate("/staff");
+      else navigate("/user");
+
+    } catch (err) {
+      toast({
+        title: err.response?.data?.msg || "Login failed",
+        status: "error",
+      });
     }
   };
 

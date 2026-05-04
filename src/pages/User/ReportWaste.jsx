@@ -12,6 +12,7 @@ import {
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../api/axios"; // 🔥 add this
 
 function ReportWaste() {
   const toast = useToast();
@@ -35,7 +36,7 @@ function ReportWaste() {
     locationExtra: "",
   });
 
-  // 🔄 HANDLE INPUT CHANGE
+  // 🔄 HANDLE INPUT
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -43,7 +44,7 @@ function ReportWaste() {
     });
   };
 
-  // 🖼️ IMAGE UPLOAD (MAX 3)
+  // 🖼️ IMAGE UPLOAD
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
 
@@ -55,14 +56,14 @@ function ReportWaste() {
     setFormData({ ...formData, images: files });
   };
 
-  // 👉 STEP 1 VALIDATION
+  // 👉 STEP 1
   const handleNext = () => {
-    const { wasteType, volume, description, images } = formData;
+    const { title, wasteType, volume, description, images } = formData;
 
     if (!title || !wasteType || !volume || !description) {
-    toast({ title: "Fill all required fields", status: "error" });
-    return;
-  }
+      toast({ title: "Fill all required fields", status: "error" });
+      return;
+    }
 
     if (images.length !== 3) {
       toast({ title: "Upload exactly 3 images", status: "error" });
@@ -72,8 +73,8 @@ function ReportWaste() {
     setStep(2);
   };
 
-  // 👉 FINAL SUBMIT
-  const handleSubmit = () => {
+  // 🚀 FINAL SUBMIT (API CALL 🔥)
+  const handleSubmit = async () => {
     const { pincode, city, street } = formData;
 
     if (!pincode || !city || !street) {
@@ -81,98 +82,74 @@ function ReportWaste() {
       return;
     }
 
-    toast({ title: "Complaint Submitted ✅", status: "success" });
+    try {
+      const data = new FormData();
 
-    console.log("FINAL DATA:", formData);
+      // 🔹 TEXT
+      Object.keys(formData).forEach((key) => {
+        if (key !== "images") {
+          data.append(key, formData[key]);
+        }
+      });
 
-    navigate("/user"); // dashboard / my complaints
+      // 🔹 IMAGES
+      formData.images.forEach((img) => {
+        data.append("images", img);
+      });
+
+      await API.post("/complaints", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast({ title: "Complaint Submitted ✅", status: "success" });
+
+      navigate("/complaints");
+
+    } catch (err) {
+      toast({
+        title: err.response?.data?.msg || "Upload failed",
+        status: "error",
+      });
+    }
   };
 
   return (
-    <Flex
-      minH="80vh"
-      align="center"
-      justify="center"
-      bg="gray.50"
-      px={4}
-    >
-      <Box
-        bg="white"
-        p={8}
-        borderRadius="xl"
-        boxShadow="lg"
-        w="100%"
-        maxW="500px"
-      >
-        {/* TITLE */}
-        <Text
-          fontSize="2xl"
-          fontWeight="bold"
-          mb={5}
-          textAlign="center"
-        >
+    <Flex minH="80vh" align="center" justify="center" bg="gray.50" px={4}>
+      <Box bg="white" p={8} borderRadius="xl" boxShadow="lg" w="100%" maxW="500px">
+        
+        <Text fontSize="2xl" fontWeight="bold" mb={5} textAlign="center">
           Report Waste
         </Text>
 
         <VStack spacing={4} align="stretch">
 
-          {/* ================= STEP 1 ================= */}
+          {/* STEP 1 */}
           {step === 1 && (
             <>
-              <Input
-                placeholder="Enter Complaint Title (e.g. Garbage near park)"
-                name="title"
-                onChange={handleChange}
-              />
-              <Select
-                name="wasteType"
-                placeholder="Select Waste Type"
-                onChange={handleChange}
-              >
+              <Input placeholder="Enter Complaint Title" name="title" onChange={handleChange} />
+
+              <Select name="wasteType" placeholder="Select Waste Type" onChange={handleChange}>
                 <option value="dry">Dry Waste</option>
                 <option value="wet">Wet Waste</option>
                 <option value="both">Mixed Waste</option>
               </Select>
 
-              <Select
-                name="volume"
-                placeholder="Select Volume"
-                onChange={handleChange}
-              >
-                <option value="small">Small (1–2 bags)</option>
-                <option value="medium">Medium (3–5 bags)</option>
-                <option value="large">Large (bulk/heap)</option>
+              <Select name="volume" placeholder="Select Volume" onChange={handleChange}>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
               </Select>
 
-              <Textarea
-                placeholder="Describe the waste"
-                name="description"
-                onChange={handleChange}
-              />
+              <Textarea placeholder="Describe the waste" name="description" onChange={handleChange} />
+              <Textarea placeholder="Additional Info" name="extra" onChange={handleChange} />
 
-              <Textarea
-                placeholder="Additional Info (optional)"
-                name="extra"
-                onChange={handleChange}
-              />
-
-              {/* IMAGE UPLOAD */}
-              <Input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
+              <Input type="file" multiple accept="image/*" onChange={handleImageUpload} />
 
               <Text fontSize="sm" color="gray.500">
                 Upload exactly 3 images ({formData.images.length}/3)
               </Text>
-
-              {formData.images.length > 0 && (
-                <Text fontSize="sm" color="green.500">
-                  {formData.images.length} image(s) selected ✅
-                </Text>
-              )}
 
               <Button colorScheme="green" onClick={handleNext}>
                 Next →
@@ -180,59 +157,22 @@ function ReportWaste() {
             </>
           )}
 
-          {/* ================= STEP 2 ================= */}
+          {/* STEP 2 */}
           {step === 2 && (
             <>
-              <Input
-                placeholder="Pincode"
-                name="pincode"
-                onChange={handleChange}
-              />
-
-              <Input
-                placeholder="Ward No"
-                name="ward"
-                onChange={handleChange}
-              />
-
-              <Input
-                placeholder="City / Village"
-                name="city"
-                onChange={handleChange}
-              />
-
-              <Input
-                placeholder="Street Name"
-                name="street"
-                onChange={handleChange}
-              />
-
-              <Input
-                placeholder="Landmark"
-                name="landmark"
-                onChange={handleChange}
-              />
-
-              <Textarea
-                placeholder="Extra Location Info"
-                name="locationExtra"
-                onChange={handleChange}
-              />
+              <Input placeholder="Pincode" name="pincode" onChange={handleChange} />
+              <Input placeholder="Ward No" name="ward" onChange={handleChange} />
+              <Input placeholder="City" name="city" onChange={handleChange} />
+              <Input placeholder="Street" name="street" onChange={handleChange} />
+              <Input placeholder="Landmark" name="landmark" onChange={handleChange} />
+              <Textarea placeholder="Extra Location Info" name="locationExtra" onChange={handleChange} />
 
               <Flex gap={3}>
-                <Button
-                  variant="outline"
-                  w="50%"
-                  onClick={() => setStep(1)}
-                >
+                <Button variant="outline" w="50%" onClick={() => setStep(1)}>
                   ← Back
                 </Button>
 
-                <Button
-                  colorScheme="green"
-                  w="50%"
-                  onClick={handleSubmit}
-                >
+                <Button colorScheme="green" w="50%" onClick={handleSubmit}>
                   Submit
                 </Button>
               </Flex>

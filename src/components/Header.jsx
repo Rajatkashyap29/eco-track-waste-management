@@ -16,7 +16,7 @@ function Header() {
 
   const logout = () => {
     localStorage.removeItem("role");
-    localStorage.removeItem("token")
+    localStorage.removeItem("token");
     navigate("/");
   };
 
@@ -78,6 +78,11 @@ function Header() {
               My Complaints
             </Button>
 
+            {/* ✅ ABOUT moved before HELP */}
+            <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
+              About
+            </Button>
+
             <Button variant="ghost" color="white" onClick={() => navigate("/help")}>
               Helpdesk
             </Button>
@@ -106,6 +111,11 @@ function Header() {
             <Button variant="ghost" color="white" onClick={() => navigate("/admin/complaints")}>
               Complaints
             </Button>
+
+            {/* ✅ ABOUT moved before HELP */}
+            <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
+              About
+            </Button>
           </>
         )}
 
@@ -120,17 +130,18 @@ function Header() {
               My Tasks
             </Button>
 
+            {/* ✅ ABOUT moved before HELP */}
+            <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
+              About
+            </Button>
+
             <Button variant="ghost" color="white" onClick={() => navigate("/help")}>
               Helpdesk
             </Button>
           </>
         )}
 
-        {/* COMMON */}
-        <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
-          About
-        </Button>
-
+        {/* PROFILE MENU */}
         {role && (
           <Menu>
             <MenuButton as={Button} variant="ghost" color="white">
@@ -139,15 +150,12 @@ function Header() {
 
             <MenuList
               bg="white"
-              color="gray.800"     // ✅ FIX: readable text
+              color="gray.800"
               borderRadius="md"
               boxShadow="lg"
               minW="150px"
             >
-              <MenuItem
-                _hover={{ bg: "gray.100" }}
-                onClick={() => navigate("/profile")}
-              >
+              <MenuItem onClick={() => navigate("/profile")}>
                 My Profile
               </MenuItem>
 
@@ -160,6 +168,7 @@ function Header() {
             </MenuList>
           </Menu>
         )}
+
       </Flex>
     </Flex>
   );

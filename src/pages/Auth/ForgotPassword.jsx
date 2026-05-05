@@ -12,6 +12,7 @@ import {
 import { CloseIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../api/axios";
 
 function ForgotPassword() {
   const navigate = useNavigate();
@@ -29,58 +30,104 @@ function ForgotPassword() {
 
   const [newPassword, setNewPassword] = useState("");
 
-  const dummyUser = {
-    email: "user@gmail.com",
-    answer1: "dog",
-    answer2: "maths",
-    answer3: "delhi",
+  const [loading, setLoading] = useState(false);
+
+  // 🔥 STEP 1: EMAIL CHECK (API)
+  const handleEmailCheck = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.post("/auth/forgot-email-check", {
+        email,
+      });
+
+      toast({
+        title: res.data.msg || "Email verified",
+        status: "success",
+      });
+
+      setStep(2);
+
+    } catch (err) {
+      toast({
+        title: err.response?.data?.msg || "Email not found",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleEmailCheck = () => {
-    if (email !== dummyUser.email) {
-      toast({ title: "Email not found", status: "error" });
-      return;
+  // 🔥 STEP 2: SECURITY ANSWERS CHECK (API)
+  const handleAnswerCheck = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.post("/auth/verify-answers", {
+        email,
+        ...answers,
+      });
+
+      toast({
+        title: res.data.msg || "Verified",
+        status: "success",
+      });
+
+      setStep(3);
+
+    } catch (err) {
+      toast({
+        title: err.response?.data?.msg || "Wrong answers",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
     }
-    toast({ title: "Email verified", status: "success" });
-    setStep(2);
   };
 
-  const handleAnswerCheck = () => {
-    if (
-      answers.answer1 !== dummyUser.answer1 ||
-      answers.answer2 !== dummyUser.answer2 ||
-      answers.answer3 !== dummyUser.answer3
-    ) {
-      toast({ title: "Wrong answers", status: "error" });
-      return;
+  // 🔥 STEP 3: RESET PASSWORD (API)
+  const handleResetPassword = async () => {
+    try {
+      if (!newPassword) {
+        toast({ title: "Enter new password", status: "error" });
+        return;
+      }
+
+      setLoading(true);
+
+      const res = await API.post("/auth/reset-password", {
+        email,
+        newPassword,
+      });
+
+      toast({
+        title: res.data.msg || "Password reset successful",
+        status: "success",
+      });
+
+      navigate("/login");
+
+    } catch (err) {
+      toast({
+        title: err.response?.data?.msg || "Reset failed",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    toast({ title: "Verified", status: "success" });
-    setStep(3);
-  };
-
-  const handleResetPassword = () => {
-    if (!newPassword) {
-      toast({ title: "Enter new password", status: "error" });
-      return;
-    }
-
-    toast({ title: "Password reset successful", status: "success" });
-    navigate("/login");
   };
 
   return (
- 
-  <Box
-    minH="80vh"
-    w="100%"
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-    bg="gray.100"
-    px={4}
-    overflowX="hidden"
-  >
+    <Box
+      minH="80vh"
+      w="100%"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      bg="gray.100"
+      px={4}
+      overflowX="hidden"
+    >
       <Box
         bg="white"
         p={8}
@@ -91,16 +138,14 @@ function ForgotPassword() {
         position="relative"
       >
 
-        {/* ❌ CLOSE */}
+        {/* CLOSE */}
         <IconButton
           icon={<CloseIcon />}
           size="sm"
           variant="ghost"
-          color="gray.600"
           position="absolute"
           top="10px"
           right="10px"
-          _hover={{ bg: "gray.100" }}
           onClick={() => navigate("/")}
         />
 
@@ -110,11 +155,11 @@ function ForgotPassword() {
             Forgot Password
           </Text>
           <Text fontSize="sm" color="gray.500">
-            Recover your account in 3 simple steps
+            Recover your account in 3 steps
           </Text>
         </VStack>
 
-        {/* STEP PROGRESS */}
+        {/* PROGRESS */}
         <Progress value={(step / 3) * 100} size="sm" mb={5} colorScheme="green" />
 
         <VStack spacing={4}>
@@ -128,7 +173,12 @@ function ForgotPassword() {
                 onChange={(e) => setEmail(e.target.value)}
               />
 
-              <Button colorScheme="green" width="100%" onClick={handleEmailCheck}>
+              <Button
+                colorScheme="green"
+                width="100%"
+                onClick={handleEmailCheck}
+                isLoading={loading}
+              >
                 Next
               </Button>
             </>
@@ -162,7 +212,12 @@ function ForgotPassword() {
                 }
               />
 
-              <Button colorScheme="green" width="100%" onClick={handleAnswerCheck}>
+              <Button
+                colorScheme="green"
+                width="100%"
+                onClick={handleAnswerCheck}
+                isLoading={loading}
+              >
                 Verify
               </Button>
             </>
@@ -178,7 +233,12 @@ function ForgotPassword() {
                 onChange={(e) => setNewPassword(e.target.value)}
               />
 
-              <Button colorScheme="green" width="100%" onClick={handleResetPassword}>
+              <Button
+                colorScheme="green"
+                width="100%"
+                onClick={handleResetPassword}
+                isLoading={loading}
+              >
                 Reset Password
               </Button>
             </>

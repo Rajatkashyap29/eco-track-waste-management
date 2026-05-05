@@ -12,26 +12,41 @@ import {
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import API from "../../api/axios";
 
 function StaffTasks() {
   const navigate = useNavigate();
 
-  const allTasks = Array.from({ length: 25 }, (_, i) => ({
-    id: i + 1,
-    title: `Garbage Issue ${i + 1}`,
-    wasteType: "Dry",
-    volume: "Medium",
-    location: "Patna",
-    date: "2 May 2026",
-    status: i % 2 === 0 ? "Pending" : "In Progress",
-  }));
-
+  const [tasks, setTasks] = useState([]);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const perPage = 10;
 
-  const totalPages = Math.ceil(allTasks.length / perPage);
-  const data = allTasks.slice((page - 1) * perPage, page * perPage);
+  // 🔥 FETCH TASKS FROM BACKEND
+  useEffect(() => {
+    fetchTasks();
+  }, [page]);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.get(
+        `/complaints/assigned?page=${page}&limit=${perPage}`
+      );
+
+      setTasks(res.data.complaints || []);
+      setTotalPages(res.data.totalPages || 1);
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box p={6} maxW="1100px" mx="auto">
@@ -41,67 +56,79 @@ function StaffTasks() {
       </Text>
 
       <Box bg="white" borderRadius="xl" boxShadow="sm" overflow="hidden">
-        <Table>
-          <Thead bg="gray.100">
-            <Tr>
-              <Th>ID</Th>
-              <Th>Title</Th>
-              <Th>Type</Th>
-              <Th>Volume</Th>
-              <Th>Location</Th>
-              <Th>Status</Th>
-            </Tr>
-          </Thead>
 
-          <Tbody>
-            {data.map((task) => (
-              <Tr
-                key={task.id}
-                cursor="pointer"
-                _hover={{ bg: "gray.50" }}
-                onClick={() => navigate(`/staff/task/${task.id}`)}
-              >
-                <Td>{task.id}</Td>
-                <Td>{task.title}</Td>
-                <Td>{task.wasteType}</Td>
-                <Td>{task.volume}</Td>
-                <Td>{task.location}</Td>
-                <Td>
-                  <Text
-                    px={2}
-                    py={1}
-                    borderRadius="md"
-                    fontSize="sm"
-                    bg={
-                      task.status === "Pending"
-                        ? "red.100"
-                        : "yellow.100"
-                    }
-                  >
-                    {task.status}
-                  </Text>
-                </Td>
+        {loading ? (
+          <Text textAlign="center" py={10}>Loading...</Text>
+        ) : (
+          <Table>
+            <Thead bg="gray.100">
+              <Tr>
+                <Th>ID</Th>
+                <Th>Title</Th>
+                <Th>Type</Th>
+                <Th>Priority</Th>
+                <Th>Status</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+
+            <Tbody>
+              {tasks.map((task) => (
+                <Tr
+                  key={task._id}
+                  cursor="pointer"
+                  _hover={{ bg: "gray.50" }}
+                  onClick={() =>
+                    navigate(`/staff/task/${task._id}`)
+                  }
+                >
+                  <Td>#{task._id.slice(-4)}</Td>
+                  <Td>{task.title}</Td>
+                  <Td>{task.wasteType || "N/A"}</Td>
+                  <Td>{task.volume || "N/A"}</Td>
+
+                  {/* STATUS */}
+                  <Td>
+                    <Text
+                      px={2}
+                      py={1}
+                      borderRadius="md"
+                      fontSize="sm"
+                      textTransform="capitalize"
+                      bg={
+                        task.status === "completed"
+                          ? "green.100"
+                          : task.status === "in-progress"
+                          ? "yellow.100"
+                          : "red.100"
+                      }
+                    >
+                      {task.status}
+                    </Text>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
       </Box>
 
       {/* PAGINATION */}
       <Flex justify="center" mt={6} gap={3}>
         <Button
           size="sm"
-          onClick={() => setPage(page - 1)}
+          onClick={() => setPage((p) => p - 1)}
           isDisabled={page === 1}
         >
           Prev
         </Button>
 
-        <Text>{page} / {totalPages}</Text>
+        <Text alignSelf="center">
+          {page} / {totalPages}
+        </Text>
 
         <Button
           size="sm"
-          onClick={() => setPage(page + 1)}
+          onClick={() => setPage((p) => p + 1)}
           isDisabled={page === totalPages}
         >
           Next

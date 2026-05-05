@@ -130,7 +130,7 @@ function StaffTaskDetail() {
           {task.images?.map((img, i) => (
             <Image
               key={i}
-              src={`http://localhost:5000/${img}`}
+              src={`${import.meta.env.VITE_API_URL.replace("/api","")}/${img}`}
               borderRadius="md"
             />
           ))}

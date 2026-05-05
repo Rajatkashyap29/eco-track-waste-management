@@ -19,7 +19,7 @@ function ReportWaste() {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
-
+const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     wasteType: "",
@@ -75,45 +75,48 @@ function ReportWaste() {
 
   // 🚀 FINAL SUBMIT (API CALL 🔥)
   const handleSubmit = async () => {
-    const { pincode, city, street } = formData;
+  const { pincode, city, street } = formData;
 
-    if (!pincode || !city || !street) {
-      toast({ title: "Location fields required", status: "error" });
-      return;
-    }
+  if (!pincode || !city || !street) {
+    toast({ title: "Location fields required", status: "error" });
+    return;
+  }
 
-    try {
-      const data = new FormData();
+  setLoading(true); // 🔥 START LOADING
 
-      // 🔹 TEXT
-      Object.keys(formData).forEach((key) => {
-        if (key !== "images") {
-          data.append(key, formData[key]);
-        }
-      });
+  try {
+    const data = new FormData();
 
-      // 🔹 IMAGES
-      formData.images.forEach((img) => {
-        data.append("images", img);
-      });
+    Object.keys(formData).forEach((key) => {
+      if (key !== "images") {
+        data.append(key, formData[key]);
+      }
+    });
 
-      await API.post("/complaints", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    formData.images.forEach((img) => {
+      data.append("images", img);
+    });
 
-      toast({ title: "Complaint Submitted ✅", status: "success" });
+    await API.post("/complaints", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-      navigate("/complaints");
+    toast({ title: "Complaint Submitted ✅", status: "success" });
 
-    } catch (err) {
-      toast({
-        title: err.response?.data?.msg || "Upload failed",
-        status: "error",
-      });
-    }
-  };
+    navigate("/complaints");
+
+  } catch (err) {
+    toast({
+      title: err.response?.data?.msg || "Upload failed",
+      status: "error",
+    });
+
+  } finally {
+    setLoading(false); // 🔥 STOP LOADING
+  }
+};
 
   return (
     <Flex minH="80vh" align="center" justify="center" bg="gray.50" px={4}>

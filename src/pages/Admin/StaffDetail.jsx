@@ -3,7 +3,6 @@ import {
   Text,
   VStack,
   Badge,
-  Button,
   Table,
   Thead,
   Tbody,
@@ -11,41 +10,65 @@ import {
   Th,
   Td,
   Flex,
-  useToast,
+  Button,
 } from "@chakra-ui/react";
 
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import API from "../../api/axios";
 
 function StaffDetail() {
   const { id } = useParams();
-  const toast = useToast();
 
-  // 🔥 dummy staff
-  const [staff, setStaff] = useState({
-    id,
-    name: "Ravi Kumar",
-    phone: "9876543210",
-    pincode: "800001",
-    status: "Active",
-  });
+  const [staff, setStaff] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // 🔥 assigned requests
-  const tasks = [
-    { id: 1, title: "Garbage near school", status: "Assigned" },
-    { id: 2, title: "Drain blockage", status: "In Progress" },
-  ];
+  // 🔥 pagination state
+  const [taskPage, setTaskPage] = useState(1);
+  const [taskTotalPages, setTaskTotalPages] = useState(1);
 
-  const toggleStatus = () => {
-    const newStatus = staff.status === "Active" ? "Inactive" : "Active";
+  // 🔥 FETCH STAFF
+  useEffect(() => {
+    fetchStaff();
+  }, []);
 
-    setStaff({ ...staff, status: newStatus });
+  // 🔥 FETCH TASKS (with pagination)
+  useEffect(() => {
+    fetchTasks();
+  }, [taskPage]);
 
-    toast({
-      title: `Staff ${newStatus}`,
-      status: "success",
-    });
+  const fetchStaff = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.get(`/users/${id}`);
+      setStaff(res.data);
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const fetchTasks = async () => {
+    try {
+      const res = await API.get(
+        `/complaints/all?assignedTo=${id}&page=${taskPage}&limit=5`
+      );
+
+      setTasks(res.data.complaints || []);
+      setTaskTotalPages(res.data.totalPages || 1);
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  if (loading || !staff) {
+    return <Text textAlign="center" mt={10}>Loading...</Text>;
+  }
 
   return (
     <Box maxW="900px" mx="auto" p={6}>
@@ -57,21 +80,21 @@ function StaffDetail() {
 
       <VStack align="stretch" spacing={6}>
 
-        {/* 🔥 INFO CARD */}
+        {/* 🔥 STAFF INFO */}
         <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
 
           <Text><b>Name:</b> {staff.name}</Text>
+          <Text><b>Email:</b> {staff.email}</Text>
           <Text><b>Phone:</b> {staff.phone}</Text>
           <Text><b>Pincode:</b> {staff.pincode}</Text>
 
           <Flex align="center" gap={3} mt={3}>
-            <Badge colorScheme={staff.status === "Active" ? "green" : "red"}>
+            <Badge
+              textTransform="capitalize"
+              colorScheme={staff.status === "active" ? "green" : "red"}
+            >
               {staff.status}
             </Badge>
-
-            <Button size="sm" onClick={toggleStatus}>
-              Toggle Status
-            </Button>
           </Flex>
         </Box>
 
@@ -82,25 +105,68 @@ function StaffDetail() {
             Assigned Requests
           </Text>
 
-          <Table>
-            <Thead bg="gray.100">
-              <Tr>
-                <Th>ID</Th>
-                <Th>Title</Th>
-                <Th>Status</Th>
-              </Tr>
-            </Thead>
+          {tasks.length === 0 ? (
+            <Text>No tasks assigned</Text>
+          ) : (
+            <>
+              <Table>
+                <Thead bg="gray.100">
+                  <Tr>
+                    <Th>ID</Th>
+                    <Th>Title</Th>
+                    <Th>Status</Th>
+                  </Tr>
+                </Thead>
 
-            <Tbody>
-              {tasks.map((t) => (
-                <Tr key={t.id}>
-                  <Td>{t.id}</Td>
-                  <Td>{t.title}</Td>
-                  <Td>{t.status}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
+                <Tbody>
+                  {tasks.map((t) => (
+                    <Tr key={t._id}>
+                      <Td>#{t._id.slice(-4)}</Td>
+                      <Td>{t.title}</Td>
+
+                      <Td>
+                        <Badge
+                          textTransform="capitalize"
+                          colorScheme={
+                            t.status === "completed"
+                              ? "green"
+                              : t.status === "pending"
+                              ? "red"
+                              : "yellow"
+                          }
+                        >
+                          {t.status}
+                        </Badge>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+
+              {/* 🔥 PAGINATION */}
+              <Flex justify="center" mt={4} gap={3}>
+                <Button
+                  size="sm"
+                  onClick={() => setTaskPage((p) => p - 1)}
+                  isDisabled={taskPage === 1}
+                >
+                  Prev
+                </Button>
+
+                <Text fontSize="sm" alignSelf="center">
+                  {taskPage} / {taskTotalPages}
+                </Text>
+
+                <Button
+                  size="sm"
+                  onClick={() => setTaskPage((p) => p + 1)}
+                  isDisabled={taskPage === taskTotalPages}
+                >
+                  Next
+                </Button>
+              </Flex>
+            </>
+          )}
 
         </Box>
 

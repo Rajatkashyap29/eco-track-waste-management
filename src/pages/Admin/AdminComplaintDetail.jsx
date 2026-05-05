@@ -4,24 +4,69 @@ import {
   VStack,
   Select,
   Button,
-  Input,
   Textarea,
   useToast,
 } from "@chakra-ui/react";
 
-import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import API from "../../api/axios";
 
 function AdminComplaintDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const toast = useToast();
 
-  const [status, setStatus] = useState("Open");
-  const [assignedTo, setAssignedTo] = useState("");
+  const [ticket, setTicket] = useState(null);
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleUpdate = () => {
-    toast({ title: "Updated Successfully", status: "success" });
+  // 🔥 FETCH TICKET
+  useEffect(() => {
+    fetchTicket();
+  }, []);
+
+  const fetchTicket = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.get(`/tickets/${id}`);
+      setTicket(res.data);
+      setStatus(res.data.status);
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // 🔥 UPDATE STATUS + REDIRECT
+  const handleUpdate = async () => {
+    try {
+      await API.put(`/tickets/${id}`, {
+        status,
+      });
+
+      toast({
+        title: "Ticket updated successfully",
+        status: "success",
+      });
+
+      // ⬅️ REDIRECT AFTER SUCCESS
+      navigate("/admin/complaints");
+
+    } catch (err) {
+      toast({
+        title: "Update failed",
+        status: "error",
+      });
+    }
+  };
+
+  if (loading || !ticket) {
+    return <Text textAlign="center" mt={10}>Loading...</Text>;
+  }
 
   return (
     <Box maxW="700px" mx="auto" mt={8} p={6} bg="white" borderRadius="xl">
@@ -34,46 +79,35 @@ function AdminComplaintDetail() {
 
         <Box>
           <Text fontWeight="semibold">Topic</Text>
-          <Text>Login Issue</Text>
+          <Text>{ticket.topic}</Text>
         </Box>
 
         <Box>
           <Text fontWeight="semibold">Role</Text>
-          <Text>User</Text>
-        </Box>
-
-        <Box>
-          <Text fontWeight="semibold">Complaint ID</Text>
-          <Text>#12345</Text>
+          <Text textTransform="capitalize">{ticket.role}</Text>
         </Box>
 
         <Box>
           <Text fontWeight="semibold">Description</Text>
-          <Textarea value="User unable to login" isReadOnly />
+          <Textarea value={ticket.description} isReadOnly />
         </Box>
 
         <Box>
           <Text fontWeight="semibold">Contact</Text>
-          <Text>📞 9876543210</Text>
-          <Text>📧 user@gmail.com</Text>
+          <Text>📞 {ticket.phone}</Text>
+          <Text>📧 {ticket.email}</Text>
         </Box>
 
-        {/* 🔥 ADMIN ACTION */}
-        <Box>
-          <Text fontWeight="semibold">Assign Staff</Text>
-          <Input
-            placeholder="Enter staff name / ID"
-            value={assignedTo}
-            onChange={(e) => setAssignedTo(e.target.value)}
-          />
-        </Box>
-
+        {/* 🔥 STATUS */}
         <Box>
           <Text fontWeight="semibold">Update Status</Text>
-          <Select onChange={(e) => setStatus(e.target.value)}>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
+          <Select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="open">Open</option>
+            <option value="in-progress">In Progress</option>
+            <option value="resolved">Resolved</option>
           </Select>
         </Box>
 

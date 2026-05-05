@@ -7,36 +7,51 @@ import {
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import API from "../../api/axios";
 
 function Profile() {
   const navigate = useNavigate();
 
-  // 🔥 dummy data (later backend se aayega)
-  const user = {
-    name: "Rajat Kashyap",
-    email: "rajat@gmail.com",
-    phone: "9999999999",
-    role: localStorage.getItem("role"),
-    address: "Bihar, India",
-    pincode: "800001",
+  const [user, setUser] = useState(null);
+
+  // 🔥 FETCH LOGGED IN USER
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await API.get("/users/me");
+      setUser(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem("role");
+    localStorage.clear(); // safer than removing only role
     navigate("/");
   };
 
+  if (!user) {
+    return (
+      <Box textAlign="center" mt={10}>
+        Loading...
+      </Box>
+    );
+  }
+
   return (
     <Box p={20}>
-        <Box
-            maxW="500px"
-            mx="auto"
-            bg="white"
-            p={6}
-            borderRadius="xl"
-            boxShadow="md"
-        >
-      
+      <Box
+        maxW="500px"
+        mx="auto"
+        bg="white"
+        p={6}
+        borderRadius="xl"
+        boxShadow="md"
+      >
         <VStack spacing={4} align="start">
 
           <Text fontSize="2xl" fontWeight="bold">

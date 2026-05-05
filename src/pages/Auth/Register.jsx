@@ -10,9 +10,9 @@ import {
 } from "@chakra-ui/react";
 
 import { CloseIcon } from "@chakra-ui/icons";
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../api/axios"; // ✅ axios instance
 
 function Register() {
   const navigate = useNavigate();
@@ -39,7 +39,8 @@ function Register() {
     });
   };
 
-  const handleRegister = () => {
+  // 🔥 REGISTER API CALL
+  const handleRegister = async () => {
     const {
       name,
       email,
@@ -53,6 +54,7 @@ function Register() {
       answer3,
     } = formData;
 
+    // ✅ VALIDATION
     if (
       !name ||
       !email ||
@@ -84,150 +86,121 @@ function Register() {
       return;
     }
 
+    try {
+      // 🔥 EXACT PAYLOAD (same as tera)
+      const res = await api.post("/auth/register", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        role: formData.role,
+        address: formData.address,
+        pincode: formData.pincode,
+        answer1: formData.answer1,
+        answer2: formData.answer2,
+        answer3: formData.answer3,
+      });
 
+      toast({
+        title: res.data.message || "Registration Successful",
+        status: "success",
+      });
 
-    toast({ title: "Registration Successful", status: "success" });
+      navigate("/login");
 
-    console.log("User Data:", formData);
-
-    navigate("/login");
+    } catch (err) {
+      toast({
+        title: err.response?.data?.message || "Registration Failed",
+        status: "error",
+      });
+    }
   };
 
- return (
-  <Box
-    minH="100vh"
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-    bg="gray.100"
-    px={4}
-  >
+  return (
     <Box
-      bg="white"
-      p={8}
-      borderRadius="xl"
-      boxShadow="lg"
-      width="100%"
-      maxW="650px"
-      position="relative"
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      bg="gray.100"
+      px={4}
     >
+      <Box
+        bg="white"
+        p={8}
+        borderRadius="xl"
+        boxShadow="lg"
+        width="100%"
+        maxW="650px"
+        position="relative"
+      >
 
-      {/* ❌ CLOSE BUTTON */}
-      <IconButton
-        icon={<CloseIcon />}
-        size="sm"
-        variant="ghost"
-        color="gray.600"
-        position="absolute"
-        top="12px"
-        right="12px"
-        _hover={{ bg: "gray.100" }}
-        onClick={() => navigate("/")}
-      />
+        {/* ❌ CLOSE */}
+        <IconButton
+          icon={<CloseIcon />}
+          size="sm"
+          variant="ghost"
+          position="absolute"
+          top="12px"
+          right="12px"
+          onClick={() => navigate("/")}
+        />
 
-      {/* HEADER */}
-      <VStack spacing={1} mb={6}>
-        <Text fontSize="2xl" fontWeight="bold">
-          Create Account
-        </Text>
-        <Text fontSize="sm" color="gray.500">
-          Join EcoTrack and help keep your city clean
-        </Text>
-      </VStack>
+        {/* HEADER */}
+        <VStack spacing={1} mb={6}>
+          <Text fontSize="2xl" fontWeight="bold">
+            Create Account
+          </Text>
+          <Text fontSize="sm" color="gray.500">
+            Join EcoTrack and help keep your city clean
+          </Text>
+        </VStack>
 
-      <VStack spacing={4} align="stretch">
+        <VStack spacing={4} align="stretch">
 
-        {/* BASIC INFO */}
-        <Input placeholder="Full Name" name="name" onChange={handleChange} />
-        <Input placeholder="Email" name="email" onChange={handleChange} />
+          <Input placeholder="Full Name" name="name" onChange={handleChange} />
+          <Input placeholder="Email" name="email" onChange={handleChange} />
+          <Input placeholder="Phone Number" name="phone" onChange={handleChange} />
 
-        <Input placeholder="Phone Number" name="phone" onChange={handleChange} />
+          <Input placeholder="Password" type="password" name="password" onChange={handleChange} />
+          <Input placeholder="Confirm Password" type="password" name="confirmPassword" onChange={handleChange} />
 
-        <Input placeholder="Password" type="password" name="password" onChange={handleChange} />
-        <Input placeholder="Confirm Password" type="password" name="confirmPassword" onChange={handleChange} />
+          <Select name="role" onChange={handleChange}>
+            <option value="user">User</option>
+            <option value="staff">Staff</option>
+          </Select>
 
-        <Select name="role" onChange={handleChange}>
-          <option value="user">User</option>
-          <option value="staff">Staff</option>
-        </Select>
+          <Input placeholder="Address" name="address" onChange={handleChange} />
+          <Input placeholder="Pincode" name="pincode" onChange={handleChange} />
 
-        <Input placeholder="Address" name="address" onChange={handleChange} />
-        <Input placeholder="Pincode" name="pincode" onChange={handleChange} />
+          {/* SECURITY */}
+          <Box pt={4}>
+            <Text fontWeight="semibold" mb={2}>Security Questions</Text>
 
-       
-        {/* SECURITY SECTION */}
-        <Box pt={4} mt={2}>
-          <Text fontSize="md" fontWeight="semibold" mb={3}>
-            Security Questions
+            <Input placeholder="Pet Name" name="answer1" onChange={handleChange} />
+            <Input placeholder="Favorite Teacher" name="answer2" onChange={handleChange} />
+            <Input placeholder="Birth City" name="answer3" onChange={handleChange} />
+          </Box>
+
+          <Button colorScheme="green" mt={3} onClick={handleRegister}>
+            Register
+          </Button>
+
+          <Text fontSize="sm" textAlign="center">
+            Already have an account?{" "}
+            <span
+              style={{ color: "#3182ce", cursor: "pointer" }}
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </span>
           </Text>
 
-          <VStack spacing={4} align="stretch">
-
-            {/* Q1 */}
-            <Box>
-              <Text fontSize="sm" color="gray.600" mb={1}>
-                1. What is your Pet Name?
-              </Text>
-              <Input
-                placeholder="Enter Answer"
-                name="answer1"
-                onChange={handleChange}
-              />
-            </Box>
-
-            {/* Q2 */}
-            <Box>
-              <Text fontSize="sm" color="gray.600" mb={1}>
-                2. Who was your Favorite Teacher?
-              </Text>
-              <Input
-                placeholder="Enter Answer"
-                name="answer2"
-                onChange={handleChange}
-              />
-            </Box>
-
-            {/* Q3 */}
-            <Box>
-              <Text fontSize="sm" color="gray.600" mb={1}>
-                3. What is your Birth City?
-              </Text>
-              <Input
-                placeholder="Enter Answer"
-                name="answer3"
-                onChange={handleChange}
-              />
-            </Box>
-
-          </VStack>
-        </Box>
-
-        {/* BUTTON */}
-        <Button
-          colorScheme="green"
-          width="100%"
-          size="md"
-          mt={3}
-          onClick={handleRegister}
-        >
-          Register
-        </Button>
-
-        {/* LOGIN LINK */}
-        <Text fontSize="sm" textAlign="center">
-          Already have an account?{" "}
-          <span
-            style={{ color: "#3182ce", cursor: "pointer", fontWeight: "500" }}
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </span>
-        </Text>
-
-      </VStack>
+        </VStack>
+      </Box>
     </Box>
-  </Box>
-);
+  );
 }
 
 export default Register;

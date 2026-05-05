@@ -58,7 +58,7 @@ function LandingPage() {
             </Button>
 
             <Button variant="outline" size="lg"
-              onClick={() => alert("Comming soon")}>
+              onClick={() => navigate("/about")}>
               Learn more
 
             </Button>

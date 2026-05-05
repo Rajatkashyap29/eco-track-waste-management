@@ -14,38 +14,56 @@ import {
   Badge,
 } from "@chakra-ui/react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../api/axios";
 
 function StaffList() {
   const navigate = useNavigate();
 
-  // 🔥 dummy data
-  const staffData = Array.from({ length: 25 }, (_, i) => ({
-    id: i + 1,
-    name: `Staff ${i + 1}`,
-    phone: "9876543210",
-    pincode: i % 2 === 0 ? "800001" : "834001",
-    status: i % 3 === 0 ? "Inactive" : "Active",
-    tasks: Math.floor(Math.random() * 5),
-  }));
-
+  const [staff, setStaff] = useState([]);
   const [search, setSearch] = useState("");
-  const [pincode, setPincode] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
 
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const perPage = 10;
 
-  const filtered = staffData.filter(
-    (s) =>
-      s.name.toLowerCase().includes(search.toLowerCase()) &&
-      (pincode === "" || s.pincode === pincode) &&
-      (status === "" || s.status === status)
-  );
+  // 🔥 FETCH STAFF (debounced)
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      fetchStaff();
+    }, 400);
 
-  const totalPages = Math.ceil(filtered.length / perPage);
-  const data = filtered.slice((page - 1) * perPage, page * perPage);
+    return () => clearTimeout(delay);
+  }, [search, status, page]);
+
+  const fetchStaff = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.get(
+        `/users?role=staff&page=${page}&limit=${perPage}&search=${search}&status=${status}`
+      );
+
+      setStaff(res.data.users || []);
+      setTotalPages(res.data.totalPages || 1);
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔥 RESET FILTERS
+  const handleReset = () => {
+    setSearch("");
+    setStatus("");
+    setPage(1);
+  };
 
   return (
     <Box maxW="1100px" mx="auto" p={6}>
@@ -54,84 +72,104 @@ function StaffList() {
       <Flex justify="space-between" mb={6} gap={3} flexWrap="wrap">
 
         <Input
-          placeholder="Search by name / phone"
+          placeholder="Search by name / email"
           maxW="250px"
           size="sm"
           bg="white"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setPage(1);
+            setSearch(e.target.value);
+          }}
         />
 
         <Select
-          placeholder="Filter by Pincode"
+          placeholder="Work Status"
           size="sm"
           maxW="200px"
           bg="white"
-          onChange={(e) => setPincode(e.target.value)}
+          value={status}
+          onChange={(e) => {
+            setPage(1);
+            setStatus(e.target.value);
+          }}
         >
-          <option value="800001">800001</option>
-          <option value="834001">834001</option>
+          <option value="assigned">Assigned</option>
+          <option value="free">Free</option>
         </Select>
 
-        <Select
-          placeholder="Status"
-          size="sm"
-          maxW="180px"
-          bg="white"
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-        </Select>
+        <Button size="sm" onClick={handleReset}>
+          Reset
+        </Button>
+
       </Flex>
 
       {/* 🔥 TABLE */}
-      <Box bg="white" borderRadius="xl" boxShadow="sm">
-        <Table>
-          <Thead bg="gray.100">
-            <Tr>
-              <Th>ID</Th>
-              <Th>Name</Th>
-              <Th>Phone</Th>
-              <Th>Pincode</Th>
-              <Th>Status</Th>
-              <Th>Tasks</Th>
-            </Tr>
-          </Thead>
+      <Box
+        bg="white"
+        borderRadius="xl"
+        boxShadow="sm"
+        overflowX="auto"
+      >
 
-          <Tbody>
-            {data.map((s) => (
-              <Tr
-                key={s.id}
-                _hover={{ bg: "gray.50" }}
-                cursor="pointer"
-                onClick={() => navigate(`/staff-list/${s.id}`)}
-              >
-                <Td>{s.id}</Td>
-                <Td fontWeight="medium">{s.name}</Td>
-                <Td>{s.phone}</Td>
-                <Td>{s.pincode}</Td>
-
-                <Td>
-                  <Badge
-                    colorScheme={s.status === "Active" ? "green" : "red"}
-                  >
-                    {s.status}
-                  </Badge>
-                </Td>
-
-                <Td>{s.tasks}</Td>
+        {loading ? (
+          <Text textAlign="center" py={10}>Loading...</Text>
+        ) : staff.length === 0 ? (
+          <Text textAlign="center" py={10}>No staff found</Text>
+        ) : (
+          <Table>
+            <Thead bg="gray.100">
+              <Tr>
+                <Th>ID</Th>
+                <Th>Name</Th>
+                <Th>Email</Th>
+                <Th>Phone</Th>
+                <Th>Tasks</Th>
+                <Th>Work Status</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+
+            <Tbody>
+              {staff.map((s) => (
+                <Tr
+                  key={s._id}
+                  _hover={{ bg: "gray.50" }}
+                  cursor="pointer"
+                  onClick={() => navigate(`/staff-list/${s._id}`)}
+                >
+                  <Td>#{s._id.slice(-4)}</Td>
+                  <Td fontWeight="medium">{s.name}</Td>
+                  <Td>{s.email}</Td>
+                  <Td>{s.phone}</Td>
+
+                  <Td>{s.taskCount ?? 0}</Td>
+
+                  <Td>
+                    <Badge
+                      textTransform="capitalize"
+                      colorScheme={
+                        s.workStatus === "assigned"
+                          ? "orange"
+                          : "green"
+                      }
+                    >
+                      {s.workStatus || "free"}
+                    </Badge>
+                  </Td>
+
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+
       </Box>
 
       {/* 🔥 PAGINATION */}
       <Flex justify="center" mt={6} gap={3}>
         <Button
           size="sm"
-          onClick={() => setPage(page - 1)}
+          onClick={() => setPage((prev) => prev - 1)}
           isDisabled={page === 1}
         >
           Prev
@@ -143,7 +181,7 @@ function StaffList() {
 
         <Button
           size="sm"
-          onClick={() => setPage(page + 1)}
+          onClick={() => setPage((prev) => prev + 1)}
           isDisabled={page === totalPages}
         >
           Next

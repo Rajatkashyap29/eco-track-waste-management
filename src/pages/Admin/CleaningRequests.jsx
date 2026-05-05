@@ -14,8 +14,9 @@ import {
   Button,
 } from "@chakra-ui/react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../api/axios";
 
 function CleaningRequests() {
   const navigate = useNavigate();
@@ -24,35 +25,38 @@ function CleaningRequests() {
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
 
+  const [requests, setRequests] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const itemsPerPage = 10;
 
-  // 🔥 Dummy Data
-  const data = Array.from({ length: 35 }, (_, i) => ({
-    id: i + 1,
-    wasteType: i % 2 === 0 ? "Dry" : "Wet",
-    volume: ["Small", "Medium", "Large"][i % 3],
-    location: "Ranchi, Ward 12",
-    date: "29 Apr 2026",
-    status:
-      i % 3 === 0
-        ? "Pending"
-        : i % 3 === 1
-        ? "Assigned"
-        : "Completed",
-  }));
+  // 🔥 FETCH (debounced)
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      fetchRequests();
+    }, 400);
 
-  const filtered = data.filter(
-    (item) =>
-      item.location.toLowerCase().includes(search.toLowerCase()) &&
-      (status === "" || item.status === status)
-  );
+    return () => clearTimeout(delay);
+  }, [search, status, page]);
 
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
 
-  const currentData = filtered.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
+      const res = await API.get(
+        `/complaints/all?page=${page}&limit=${itemsPerPage}&status=${status}&search=${search}`
+      );
+
+      setRequests(res.data.complaints || []);
+      setTotalPages(res.data.totalPages || 1);
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box maxW="1200px" mx="auto" p={6}>
@@ -66,11 +70,14 @@ function CleaningRequests() {
       <Flex justify="space-between" mb={4} gap={3} flexWrap="wrap">
 
         <Input
-          placeholder="Search by location..."
+          placeholder="Search by city or Title..."
           maxW="250px"
           size="sm"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setPage(1);
+            setSearch(e.target.value);
+          }}
           bg="white"
         />
 
@@ -78,62 +85,93 @@ function CleaningRequests() {
           placeholder="Filter by status"
           maxW="200px"
           size="sm"
-          onChange={(e) => setStatus(e.target.value)}
           bg="white"
+          onChange={(e) => {
+            setPage(1);
+            setStatus(e.target.value);
+          }}
         >
-          <option value="Pending">Pending</option>
-          <option value="Assigned">Assigned</option>
-          <option value="Completed">Completed</option>
+          <option value="pending">Pending</option>
+          <option value="assigned">Assigned</option>
+          <option value="completed">Completed</option>
         </Select>
 
       </Flex>
 
       {/* TABLE */}
       <Box bg="white" borderRadius="xl" boxShadow="sm" overflow="hidden">
-        <Table>
-          <Thead bg="gray.100">
-            <Tr>
-              <Th>ID</Th>
-              <Th>Waste Type</Th>
-              <Th>Volume</Th>
-              <Th>Location</Th>
-              <Th>Date</Th>
-              <Th>Status</Th>
-            </Tr>
-          </Thead>
 
-          <Tbody>
-            {currentData.map((item) => (
-              <Tr
-                key={item.id}
-                _hover={{ bg: "gray.50" }}
-                cursor="pointer"
-                onClick={() => navigate(`/request/${item.id}`)}
-              >
-                <Td fontWeight="bold">{item.id}</Td>
-                <Td>{item.wasteType}</Td>
-                <Td>{item.volume}</Td>
-                <Td>{item.location}</Td>
-                <Td>{item.date}</Td>
-
-                <Td>
-                  <Badge
-                    colorScheme={
-                      item.status === "Completed"
-                        ? "green"
-                        : item.status === "Pending"
-                        ? "red"
-                        : "yellow"
-                    }
-                  >
-                    {item.status}
-                  </Badge>
-                </Td>
-
+        {loading ? (
+          <Text textAlign="center" py={10}>Loading...</Text>
+        ) : requests.length === 0 ? (
+          <Text textAlign="center" py={10}>No requests found</Text>
+        ) : (
+          <Table>
+            <Thead bg="gray.100">
+              <Tr>
+                <Th>ID</Th>
+                <Th>Waste Type</Th>
+                <Th>Volume</Th>
+                <Th>City</Th>
+                <Th>Pincode</Th>
+                <Th>User</Th>
+                <Th>Date</Th>
+                <Th>Status</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+
+            <Tbody>
+              {requests.map((item) => (
+                <Tr
+                  key={item._id}
+                  _hover={{ bg: "gray.50" }}
+                  cursor="pointer"
+                  onClick={() => navigate(`/request/${item._id}`)}
+                >
+                  <Td fontWeight="bold">#{item._id.slice(-4)}</Td>
+
+                  <Td textTransform="capitalize">
+                    {item.wasteType}
+                  </Td>
+
+                  <Td textTransform="capitalize">
+                    {item.volume}
+                  </Td>
+
+                  {/* ✅ CITY ONLY */}
+                  <Td textTransform="capitalize">
+                    {item.city}
+                  </Td>
+
+                  {/* ✅ PINCODE */}
+                  <Td>{item.pincode}</Td>
+
+                  <Td>{item.user?.name}</Td>
+
+                  <Td>
+                    {new Date(item.createdAt).toLocaleDateString()}
+                  </Td>
+
+                  <Td>
+                    <Badge
+                      textTransform="capitalize"
+                      colorScheme={
+                        item.status === "completed"
+                          ? "green"
+                          : item.status === "pending"
+                          ? "red"
+                          : "yellow"
+                      }
+                    >
+                      {item.status}
+                    </Badge>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+
       </Box>
 
       {/* PAGINATION */}
@@ -141,7 +179,7 @@ function CleaningRequests() {
 
         <Button
           size="sm"
-          onClick={() => setPage(page - 1)}
+          onClick={() => setPage((prev) => prev - 1)}
           isDisabled={page === 1}
         >
           Prev
@@ -153,7 +191,7 @@ function CleaningRequests() {
 
         <Button
           size="sm"
-          onClick={() => setPage(page + 1)}
+          onClick={() => setPage((prev) => prev + 1)}
           isDisabled={page === totalPages}
         >
           Next

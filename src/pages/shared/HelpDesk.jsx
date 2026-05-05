@@ -10,9 +10,13 @@ import {
 } from "@chakra-ui/react";
 
 import { useState } from "react";
+import API from "../../api/axios"; 
+import { useNavigate } from "react-router-dom";
+
 
 function HelpDesk() {
   const toast = useToast();
+   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     role: "user",
@@ -32,54 +36,44 @@ function HelpDesk() {
     });
   };
 
-  // 🔥 API CALL
-  const handleSubmit = async () => {
-    const { topic, description, phone, email } = form;
+ 
 
-    if (!topic || !description || !phone || !email) {
-      toast({ title: "Please fill required fields", status: "error" });
-      return;
-    }
+const handleSubmit = async () => {
+  const { topic, description, phone, email } = form;
 
-    try {
-      const token = localStorage.getItem("token");
+  if (!topic || !description || !phone || !email) {
+    toast({ title: "Please fill required fields", status: "error" });
+    return;
+  }
 
-      const res = await fetch("http://localhost:5000/api/tickets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // 🔥 IMPORTANT
-        },
-        body: JSON.stringify(form),
-      });
+  try {
+    // AXIOS CALL
+    const res = await API.post("/tickets", form);
 
-      const data = await res.json();
+    toast({
+      title: "Ticket Raised Successfully ✅",
+      status: "success",
+    });
 
-      if (!res.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
+    // reset
+    setForm({
+      role: "user",
+      topic: "",
+      complaintId: "",
+      description: "",
+      phone: "",
+      email: "",
+      department: "",
+      priority: "medium",
+    });
 
-      toast({ title: "Ticket Raised Successfully ✅", status: "success" });
-
-      // 🔄 reset form
-      setForm({
-        role: "user",
-        topic: "",
-        complaintId: "",
-        description: "",
-        phone: "",
-        email: "",
-        department: "",
-        priority: "medium",
-      });
-
-    } catch (err) {
-      toast({
-        title: err.message || "Error raising ticket",
-        status: "error",
-      });
-    }
-  };
+  } catch (err) {
+    toast({
+      title: err.response?.data?.message || "Error raising ticket",
+      status: "error",
+    });
+  }
+};
 
   return (
     <Box

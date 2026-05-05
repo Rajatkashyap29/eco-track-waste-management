@@ -167,7 +167,7 @@ function ReportWaste() {
               >
                 <option value="dry">Dry Waste</option>
                 <option value="wet">Wet Waste</option>
-                <option value="both">Mixed Waste</option>
+                <option value="mixed">Mixed Waste</option>
               </Select>
 
               <Select

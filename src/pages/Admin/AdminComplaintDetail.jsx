@@ -21,7 +21,7 @@ function AdminComplaintDetail() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔥 FETCH TICKET
+  //  FETCH TICKET
   useEffect(() => {
     fetchTicket();
   }, []);
@@ -98,7 +98,7 @@ function AdminComplaintDetail() {
           <Text>📧 {ticket.email}</Text>
         </Box>
 
-        {/* 🔥 STATUS */}
+        {/*  STATUS */}
         <Box>
           <Text fontWeight="semibold">Update Status</Text>
           <Select

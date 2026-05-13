@@ -24,7 +24,7 @@ function CleaningRequestDetail() {
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔥 FETCH DATA
+  //  FETCH DATA
   useEffect(() => {
     fetchRequest();
     fetchStaff();
@@ -38,7 +38,7 @@ function CleaningRequestDetail() {
       setRequest(res.data);
       setStatus(res.data.status);
 
-      // ✅ AUTO SELECT STAFF IF ASSIGNED
+      //  AUTO SELECT STAFF IF ASSIGNED
       if (res.data.assignedTo) {
         setStaff(res.data.assignedTo._id);
       }
@@ -59,7 +59,7 @@ function CleaningRequestDetail() {
     }
   };
 
-  // ✅ Assign Staff
+  //  Assign Staff
   const handleAssign = async () => {
     if (!staff) {
       toast({ title: "Select staff first", status: "error" });
@@ -159,7 +159,7 @@ function CleaningRequestDetail() {
 
           <VStack align="stretch" spacing={3}>
 
-            {/* 🔥 DROPDOWN */}
+            {/*  DROPDOWN */}
             <Select
               placeholder="Select Staff"
               value={staff}
@@ -173,7 +173,7 @@ function CleaningRequestDetail() {
               ))}
             </Select>
 
-            {/* 🔥 BUTTON */}
+            {/*  BUTTON */}
             <Button
               colorScheme="blue"
               onClick={handleAssign}
@@ -182,7 +182,7 @@ function CleaningRequestDetail() {
               Assign Staff
             </Button>
 
-            {/* 🔥 SHOW ASSIGNED INFO */}
+            {/*  SHOW ASSIGNED INFO */}
             {status === "assigned" && (
               <Text fontSize="sm" color="green.500">
                 Assigned to: {request.assignedTo?.name}

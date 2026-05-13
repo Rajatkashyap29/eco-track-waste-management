@@ -80,7 +80,7 @@ function StaffDetail() {
 
       <VStack align="stretch" spacing={6}>
 
-        {/* 🔥 STAFF INFO */}
+        {/*  STAFF INFO */}
         <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
 
           <Text><b>Name:</b> {staff.name}</Text>
@@ -98,7 +98,7 @@ function StaffDetail() {
           </Flex>
         </Box>
 
-        {/* 🔥 ASSIGNED TASKS */}
+        {/*  ASSIGNED TASKS */}
         <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
 
           <Text fontWeight="bold" mb={3}>
@@ -143,7 +143,7 @@ function StaffDetail() {
                 </Tbody>
               </Table>
 
-              {/* 🔥 PAGINATION */}
+              {/*  PAGINATION */}
               <Flex justify="center" mt={4} gap={3}>
                 <Button
                   size="sm"

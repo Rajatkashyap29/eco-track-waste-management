@@ -4,7 +4,7 @@ const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-// 🔥 TOKEN AUTO ATTACH
+//  TOKEN AUTO ATTACH
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
 

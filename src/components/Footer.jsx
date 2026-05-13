@@ -58,7 +58,7 @@ function Footer() {
 
       </Flex>
 
-      {/* 🔥 BOTTOM TAGLINE (UPDATED) */}
+      {/*  BOTTOM TAGLINE */}
       <Text
         textAlign="center"
         mt={4}

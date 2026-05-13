@@ -42,7 +42,7 @@ function Header() {
       {/* NAV */}
       <Flex gap={4} align="center">
 
-        {/* ❌ NOT LOGGED IN */}
+        {/*  NOT LOGGED IN */}
         {!role && (
           <>
             <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
@@ -63,7 +63,7 @@ function Header() {
           </>
         )}
 
-        {/* 🟢 USER */}
+        {/*  USER */}
         {role === "user" && (
           <>
             <Button variant="ghost" color="white" onClick={() => navigate("/user")}>
@@ -89,7 +89,7 @@ function Header() {
           </>
         )}
 
-        {/* 🔴 ADMIN */}
+        {/* ADMIN */}
         {role === "admin" && (
           <>
             <Button variant="ghost" color="white" onClick={() => navigate("/admin")}>
@@ -112,14 +112,14 @@ function Header() {
               Complaints
             </Button>
 
-            {/* ✅ ABOUT moved before HELP */}
+            {/* ABOUT moved before HELP */}
             <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
               About
             </Button>
           </>
         )}
 
-        {/* 🔵 STAFF */}
+        {/*  STAFF */}
         {role === "staff" && (
           <>
             <Button variant="ghost" color="white" onClick={() => navigate("/staff")}>
@@ -130,7 +130,7 @@ function Header() {
               My Tasks
             </Button>
 
-            {/* ✅ ABOUT moved before HELP */}
+            {/*  ABOUT moved before HELP */}
             <Button variant="ghost" color="white" onClick={() => navigate("/about")}>
               About
             </Button>

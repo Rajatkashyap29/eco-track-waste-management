@@ -21,7 +21,7 @@ function StaffTaskDetail() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔥 FETCH TASK
+  //  FETCH TASK
   useEffect(() => {
     const fetchTask = async () => {
       try {
@@ -41,7 +41,7 @@ function StaffTaskDetail() {
     fetchTask();
   }, [id]);
 
-  // 🔥 START WORK
+  // START WORK
   const startWork = async () => {
     try {
       await API.put(`/complaints/status/${id}`, {
@@ -63,7 +63,7 @@ function StaffTaskDetail() {
     }
   };
 
-  // 🔥 COMPLETE WORK
+  //  COMPLETE WORK
   const completeWork = async () => {
     try {
       await API.put(`/complaints/status/${id}`, {
@@ -77,7 +77,7 @@ function StaffTaskDetail() {
         status: "success",
       });
 
-      // 🔥 redirect after completion
+      //  redirect after completion
       navigate("/staff/tasks");
 
     } catch (err) {

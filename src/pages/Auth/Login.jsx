@@ -37,13 +37,13 @@ function Login() {
         password,
       });
 
-      // 🔥 SAVE DATA
+      //  SAVE DATA
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
 
       toast({ title: "Login Successful", status: "success" });
 
-      // 🔀 REDIRECT
+      //  REDIRECT
       if (res.data.role === "admin") navigate("/admin");
       else if (res.data.role === "staff") navigate("/staff");
       else navigate("/user");
@@ -83,7 +83,7 @@ function Login() {
       position="relative"
     >
 
-      {/* ❌ CLOSE */}
+      {/* CLOSE */}
       <IconButton
         icon={<CloseIcon />}
         size="sm"

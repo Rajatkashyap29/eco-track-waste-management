@@ -18,7 +18,7 @@ function StaffDashboard() {
   const [recentTasks, setRecentTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 FETCH DATA
+  //  FETCH DATA
   useEffect(() => {
     fetchDashboard();
   }, []);
@@ -27,11 +27,11 @@ function StaffDashboard() {
     try {
       setLoading(true);
 
-      // 🔥 STATS
+      //  STATS
       const statsRes = await API.get("complaints/stats/staff");
       setStats(statsRes.data);
 
-      // 🔥 RECENT TASKS
+      //  RECENT TASKS
       const taskRes = await API.get("/complaints/assigned?page=1");
       setRecentTasks(taskRes.data.complaints.slice(0, 5));
 
@@ -53,7 +53,7 @@ function StaffDashboard() {
   return (
     <Box p={6} maxW="1100px" mx="auto">
 
-      {/* 🔥 STATS CARDS */}
+      {/*  STATS CARDS */}
       <SimpleGrid columns={[2, 2, 4]} spacing={5} mb={8}>
 
         <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
@@ -78,7 +78,7 @@ function StaffDashboard() {
 
       </SimpleGrid>
 
-      {/* 🔥 QUICK ACTION */}
+      {/*  QUICK ACTION */}
       <Box
         bg="white"
         p={6}
@@ -94,7 +94,7 @@ function StaffDashboard() {
         </Text>
       </Box>
 
-      {/* 🔥 RECENT TASKS */}
+      {/*  RECENT TASKS */}
       <Box bg="white" p={6} borderRadius="xl" boxShadow="sm">
 
         <Flex justify="space-between" mb={4}>

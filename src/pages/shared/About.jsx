@@ -41,7 +41,7 @@ function About() {
           </Text>
         </Box>
 
-        {/* 🔥 USER STEPS */}
+        {/*  USER STEPS */}
         <Box bg="white" p={6} borderRadius="xl" boxShadow="sm" mb={8}>
           <Text fontSize="xl" fontWeight="bold" mb={4}>
             📌 How You Can Help
@@ -55,7 +55,7 @@ function About() {
           </VStack>
         </Box>
 
-        {/* 🔥 OUR PROCESS */}
+        {/*  OUR PROCESS */}
         <Box bg="white" p={6} borderRadius="xl" boxShadow="sm">
           <Text fontSize="xl" fontWeight="bold" mb={4}>
             ⚙️ What Happens After You Raise a Request

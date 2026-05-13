@@ -31,7 +31,7 @@ function AdminComplaints() {
 
   const perPage = 10;
 
-  // 🔥 FETCH DATA
+  //  FETCH DATA
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchTickets();
@@ -64,7 +64,7 @@ function AdminComplaints() {
   return (
     <Box p={6} maxW="1200px" mx="auto">
 
-      {/* 🔥 FILTER BAR */}
+      {/* FILTER BAR */}
       <Flex mb={6} justify="space-between" wrap="wrap" gap={4}>
 
         <Input
@@ -112,7 +112,7 @@ function AdminComplaints() {
         </Flex>
       </Flex>
 
-      {/* 🔥 TABLE */}
+      {/*  TABLE */}
       <Box bg="white" borderRadius="xl" boxShadow="sm" overflow="hidden">
 
         {loading ? (
@@ -200,7 +200,7 @@ function AdminComplaints() {
         )}
       </Box>
 
-      {/* 🔥 PAGINATION */}
+      {/*  PAGINATION */}
       <Flex justify="center" mt={6} gap={3}>
         <Button
           size="sm"

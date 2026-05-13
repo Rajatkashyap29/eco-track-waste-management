@@ -106,7 +106,7 @@ function ComplaintDetail() {
             </>
           )}
 
-          {/* 🗑️ WASTE DETAILS */}
+          {/*  WASTE DETAILS */}
           <Text fontSize="lg" fontWeight="semibold">
             Waste Details
           </Text>

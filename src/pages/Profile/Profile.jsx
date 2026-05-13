@@ -15,7 +15,7 @@ function Profile() {
 
   const [user, setUser] = useState(null);
 
-  // 🔥 FETCH LOGGED IN USER
+  //  FETCH LOGGED IN USER
   useEffect(() => {
     fetchProfile();
   }, []);

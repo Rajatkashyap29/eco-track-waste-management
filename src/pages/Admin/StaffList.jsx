@@ -31,7 +31,7 @@ function StaffList() {
 
   const perPage = 10;
 
-  // 🔥 FETCH STAFF (debounced)
+  //  FETCH STAFF (debounced)
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchStaff();
@@ -58,7 +58,7 @@ function StaffList() {
     }
   };
 
-  // 🔥 RESET FILTERS
+  //  RESET FILTERS
   const handleReset = () => {
     setSearch("");
     setStatus("");
@@ -68,7 +68,7 @@ function StaffList() {
   return (
     <Box maxW="1100px" mx="auto" p={6}>
 
-      {/* 🔥 TOP BAR */}
+      {/*  TOP BAR */}
       <Flex justify="space-between" mb={6} gap={3} flexWrap="wrap">
 
         <Input
@@ -104,7 +104,7 @@ function StaffList() {
 
       </Flex>
 
-      {/* 🔥 TABLE */}
+      {/*  TABLE */}
       <Box
         bg="white"
         borderRadius="xl"
@@ -165,7 +165,7 @@ function StaffList() {
 
       </Box>
 
-      {/* 🔥 PAGINATION */}
+      {/*  PAGINATION */}
       <Flex justify="center" mt={6} gap={3}>
         <Button
           size="sm"

@@ -49,7 +49,7 @@ function UserList() {
 
       let data = res.data.users || [];
 
-      // 🔥 FRONTEND FILTER (status)
+      //  FRONTEND FILTER (status)
       if (status) {
         data = data.filter((u) =>
           status === "active" ? !u.isBlocked : u.isBlocked
@@ -69,7 +69,7 @@ function UserList() {
   return (
     <Box maxW="1100px" mx="auto" p={6}>
 
-      {/* 🔥 TOP BAR */}
+      {/*  TOP BAR */}
       <Flex justify="space-between" mb={6} gap={3} flexWrap="wrap">
 
         <Input
@@ -101,7 +101,7 @@ function UserList() {
 
       </Flex>
 
-      {/* 🔥 TABLE */}
+      {/*  TABLE */}
       <Box bg="white" borderRadius="xl" boxShadow="sm">
 
         {loading ? (
@@ -133,7 +133,7 @@ function UserList() {
                   <Td>{u.email}</Td>
                   <Td>{u.phone}</Td>
 
-                  {/* 🔥 STATUS FIX */}
+                  {/*  STATUS FIX */}
                   <Td>
                     <Badge
                       colorScheme={!u.isBlocked ? "green" : "red"}
@@ -150,7 +150,7 @@ function UserList() {
 
       </Box>
 
-      {/* 🔥 PAGINATION */}
+      {/*  PAGINATION */}
       <Flex justify="center" mt={6} gap={3}>
         <Button
           size="sm"

@@ -25,7 +25,7 @@ function StaffTasks() {
 
   const perPage = 10;
 
-  // 🔥 FETCH TASKS FROM BACKEND
+  //  FETCH TASKS FROM BACKEND
   useEffect(() => {
     fetchTasks();
   }, [page]);

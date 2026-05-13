@@ -24,22 +24,22 @@ function AdminDashboard() {
   const [requests, setRequests] = useState([]);
   const [tickets, setTickets] = useState([]);
 
-  // 🔥 FETCH DATA
+  //  FETCH DATA
   useEffect(() => {
     fetchData();
   }, []);
 
  const fetchData = async () => {
   try {
-    // ✅ STATS
+    //  STATS
     const statsRes = await API.get("/complaints/stats/dashboard");
     setStats(statsRes.data);
 
-    // ✅ COMPLAINTS
+    // COMPLAINTS
     const complaintRes = await API.get("/complaints/all?limit=5");
     setRequests(complaintRes.data.complaints || []);
 
-    // ✅ TICKETS
+    //  TICKETS
     const ticketRes = await API.get("/tickets/all?limit=5");
     setTickets(ticketRes.data.tickets || []);
 
@@ -51,7 +51,7 @@ function AdminDashboard() {
   return (
     <Box p={6} maxW="1200px" mx="auto">
 
-      {/* 🔥 CARDS */}
+      {/*  CARDS */}
       <Grid templateColumns="repeat(4, 1fr)" gap={4} mb={6}>
         {[
           { label: "Total Requests", value: stats.totalRequests },
@@ -68,7 +68,7 @@ function AdminDashboard() {
         ))}
       </Grid>
 
-      {/* 🔥 TABS */}
+      {/*  TABS */}
       <Tabs variant="soft-rounded" colorScheme="green">
 
         <TabList mb={4}>
@@ -78,7 +78,7 @@ function AdminDashboard() {
 
         <TabPanels>
 
-          {/* 🟢 COMPLAINTS */}
+          {/*  COMPLAINTS */}
           <TabPanel p={0}>
             <Box bg="white" borderRadius="lg" boxShadow="sm">
               <Table>
@@ -118,7 +118,7 @@ function AdminDashboard() {
             </Box>
           </TabPanel>
 
-          {/* 🟡 TICKETS */}
+          {/*  TICKETS */}
           <TabPanel p={0}>
             <Box bg="white" borderRadius="lg" boxShadow="sm">
               <Table>

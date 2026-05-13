@@ -32,7 +32,7 @@ function ForgotPassword() {
 
   const [loading, setLoading] = useState(false);
 
-  // 🔥 STEP 1: EMAIL CHECK (API)
+  //  STEP 1: EMAIL CHECK (API)
   const handleEmailCheck = async () => {
     try {
       setLoading(true);
@@ -58,7 +58,7 @@ function ForgotPassword() {
     }
   };
 
-  // 🔥 STEP 2: SECURITY ANSWERS CHECK (API)
+  //  STEP 2: SECURITY ANSWERS CHECK (API)
   const handleAnswerCheck = async () => {
     try {
       setLoading(true);
@@ -85,7 +85,7 @@ function ForgotPassword() {
     }
   };
 
-  // 🔥 STEP 3: RESET PASSWORD (API)
+  //  STEP 3: RESET PASSWORD (API)
   const handleResetPassword = async () => {
     try {
       if (!newPassword) {

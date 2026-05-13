@@ -31,12 +31,12 @@ function UserDetail() {
   const [loading, setLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
 
-  // 🔥 FETCH USER
+  //  FETCH USER
   useEffect(() => {
     fetchUser();
   }, []);
 
-  // 🔥 FETCH COMPLAINTS
+  //  FETCH COMPLAINTS
   useEffect(() => {
     fetchComplaints();
   }, [page]);
@@ -67,14 +67,14 @@ function UserDetail() {
     }
   };
 
-  // 🔥 REAL BLOCK API CALL
+  //  REAL BLOCK API CALL
   const toggleStatus = async () => {
     try {
       setBtnLoading(true);
 
       const res = await API.put(`/users/block/${id}`);
 
-      // 🔥 update UI from response
+      //  update UI from response
       setUser({
         ...user,
         isBlocked: res.data.isBlocked,
@@ -108,7 +108,7 @@ function UserDetail() {
 
       <VStack spacing={6} align="stretch">
 
-        {/* 🔥 USER INFO */}
+        {/*  USER INFO */}
         <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
 
           <Text><b>Name:</b> {user.name}</Text>
@@ -132,7 +132,7 @@ function UserDetail() {
           </Flex>
         </Box>
 
-        {/* 🔥 COMPLAINTS */}
+        {/*  COMPLAINTS */}
         <Box bg="white" p={5} borderRadius="xl" boxShadow="sm">
 
           <Text fontWeight="bold" mb={3}>
@@ -182,7 +182,7 @@ function UserDetail() {
                 </Tbody>
               </Table>
 
-              {/* 🔥 PAGINATION */}
+              {/*  PAGINATION */}
               <Flex justify="center" mt={4} gap={3}>
                 <Button
                   size="sm"

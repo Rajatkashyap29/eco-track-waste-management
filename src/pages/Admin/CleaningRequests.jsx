@@ -31,7 +31,7 @@ function CleaningRequests() {
 
   const itemsPerPage = 10;
 
-  // 🔥 FETCH (debounced)
+  //  FETCH (debounced)
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchRequests();
@@ -138,12 +138,12 @@ function CleaningRequests() {
                     {item.volume}
                   </Td>
 
-                  {/* ✅ CITY ONLY */}
+                  {/*  CITY ONLY */}
                   <Td textTransform="capitalize">
                     {item.city}
                   </Td>
 
-                  {/* ✅ PINCODE */}
+                  {/*  PINCODE */}
                   <Td>{item.pincode}</Td>
 
                   <Td>{item.user?.name}</Td>

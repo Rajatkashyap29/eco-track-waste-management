@@ -39,7 +39,7 @@ function Register() {
     });
   };
 
-  // 🔥 REGISTER API CALL
+  //  REGISTER API CALL
   const handleRegister = async () => {
     const {
       name,
@@ -54,7 +54,7 @@ function Register() {
       answer3,
     } = formData;
 
-    // ✅ VALIDATION
+    //  VALIDATION
     if (
       !name ||
       !email ||
@@ -87,7 +87,7 @@ function Register() {
     }
 
     try {
-      // 🔥 EXACT PAYLOAD (same as tera)
+      //  EXACT PAYLOAD (same as tera)
       const res = await api.post("/auth/register", {
         name: formData.name,
         email: formData.email,
@@ -136,7 +136,7 @@ function Register() {
         position="relative"
       >
 
-        {/* ❌ CLOSE */}
+        {/*  CLOSE */}
         <IconButton
           icon={<CloseIcon />}
           size="sm"
